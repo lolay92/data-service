@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "data-services"
+version = "0.1.0"
+description = " A modulable and scalable system to pull any necessary markets data using multipe APIs sources. "
+authors = ["lolay92"]
+readme = "README.md"
+packages = [{include = "data_services", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aiohttp = "^3.8.4"
+requests = "^2.28.2"
+ipykernel = "^6.22.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

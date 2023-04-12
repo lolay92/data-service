@@ -1,0 +1,11 @@
+src/data_services/__pycache__/
+src/data_services/*/__pycache__/
+tests/__pycache__/
+output/
+logs/
+src/data_services/utils/constants/mykey.ini
+data.json
+.venv/
+
+
+#  Infrastructure for a market data collection system from multiples APIs sources
