@@ -3,9 +3,7 @@ This project provides a data collection infrastructure for collecting financial 
 
 ## Project Roadmap
 - [ ] System implementation for multiple API sources
-    - [ ] eodhistoricaldata API
-    - [ ] Tiingo API
-    - [ ] Fred API
+- [ ] Set up a manager for file storage/archiving
 - [ ] Poetry for python packages and dependencies management
 - [ ] Containerize with Docker
 - [ ] Develop each API request on a specific branch and merge with the main
@@ -16,23 +14,21 @@ This project provides a data collection infrastructure for collecting financial 
 ## Project Structure
 The project has the following directory structure:
 ```bash
+.
 |-- README.md
-|-- data.json
-|-- logs
-|   `-- mainloader.log
 |-- output
 |-- poetry.lock
 |-- pyproject.toml
 |-- src
 |   `-- data_services
 |       |-- __init__.py
+|       |-- loader.py
 |       |-- loaders
 |       |   |-- __init__.py
 |       |   |-- api.py
 |       |   |-- base.py
 |       |   |-- eodhd.py
 |       |   `-- tiingo.py
-|       |-- mainloader.py
 |       `-- utils
 |           |-- __init__.py
 |           |-- constants
