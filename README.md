@@ -5,6 +5,7 @@ This project provides a data collection infrastructure for collecting financial 
 - [x] Poetry for python packages and dependencies management
 - [ ] System implementation for multiple API sources
 - [ ] Set up a manager for file storage/archiving
+- [ ] Poetry for python packages and dependencies management
 - [ ] Containerize with Docker
 - [ ] Develop each API request on a specific branch and merge with the main
 - [ ] Unitary tests with Pytest
