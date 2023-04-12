@@ -7,7 +7,6 @@ This project provides a data collection infrastructure for collecting financial 
 - [ ] System implementation for multiple API sources
 - [ ] Set up a manager for file storage/archivage
 - [ ] Containerize with Docker
-- [ ] Develop each API request on a specific branch and merge with the main
 - [ ] Unitary tests with Pytest
 - [ ] Makefile
 - [ ] Workflow automation (CI/CD) with github actions
