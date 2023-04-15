@@ -1,7 +1,7 @@
-# Data Collection Infrastructure Project
+# About
 This project provides a data collection infrastructure for collecting financial market data from different sources. The project includes a set of loaders for retrieving data from different APIs and a main loader that combines the data from all the sources.
 
-## Project Roadmap
+# Project Roadmap
 - [x] Poetry for python packages and dependencies management
 - [x] Logging configuration
 - [ ] System implementation for multiple API sources
@@ -11,7 +11,7 @@ This project provides a data collection infrastructure for collecting financial 
 - [ ] Makefile
 - [ ] Workflow automation (CI/CD) with github actions
 
-## Project Structure
+# Project Structure
 The project has the following directory structure:
 ```bash
 .
@@ -49,11 +49,11 @@ The project has the following directory structure:
 - **'utils'** sub-module contains utility functions and constants
 - **'tests'** directory contains test code for the project
 
-## Installation procedure 
+# Installation procedure 
 To be completed soon...
 
-## Containerization with Docker
+# Containerization with Docker
 To be completed soon...
 
-## License
+# License
 This project is licensed under the MIT License - see the LICENSE file for details.
