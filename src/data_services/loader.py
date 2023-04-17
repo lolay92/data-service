@@ -58,6 +58,7 @@ if __name__ == "__main__":
     EtfData = EtfData()
     EtfData.load_ohlcv(eodquery=eodquery)
 
+
 # class ExchangeTradedFunds():
 #     # integrate etfs_basket_universe
 #     # def fetch_universe by calling fetch universe from eod

@@ -30,8 +30,8 @@ class EodQueryOhclv:
     """
 
     exchange: str = "US"
-    start: Union[datetime, date] = field(default=(date(2023, 4, 12)))
-    end: Union[datetime, date] = date(2023, 4, 14)
+    start: Union[datetime, date] = field(default=(date(2023, 4, 11)))
+    end: Union[datetime, date] = date(2023, 4, 12)
     tickers: List[str] = field(default_factory=List)
 
     @staticmethod
@@ -111,7 +111,7 @@ class Eodhd(BaseLoader):
 
     async def _ohlcv_async_mode(self, eodquery: EodQueryOhclv) -> List[Dict]:
         """
-        fetch ohclv data asynchronously
+        fetch ohlcv data asynchronously
         """
         # Updating http request parameters
         self.params.update(
@@ -139,7 +139,7 @@ class Eodhd(BaseLoader):
 
     def ohlcv(self, eodquery: EodQueryOhclv, bulk_mode: bool = False) -> List[Dict]:
         """
-        Returns ohclv JSON data
+        Returns ohlcv JSON data
         """
         if bulk_mode:
             _logger.error("_fetch_ohlcv_bulk_mode function not implemented yet!")
