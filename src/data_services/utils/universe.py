@@ -10,22 +10,22 @@ UNIVERSE_FILEPATH = "src/data_services/utils/constants/universe.ini"
 class UniverseQuery:
     global_universe: ConfigParser = field(init=False, default_factory=ConfigParser)
     # ----ETFS----
-    us_eq_sector: List = field(init=False)
-    us_eq_index: List = field(init=False)
-    eq_dev_country: List = field(init=False)
-    eq_em_country: List = field(init=False)
-    us_fi_etfs: List = field(init=False)
-    commo_etfs: List = field(init=False)
+    us_eq_sector: List[str] = field(init=False)
+    us_eq_index: List[str] = field(init=False)
+    eq_dev_country: List[str] = field(init=False)
+    eq_em_country: List[str] = field(init=False)
+    us_fi_etfs: List[str] = field(init=False)
+    commo_etfs: List[str] = field(init=False)
     # ----FUTURES----
-    us_eq_idx_futs: List = field(init=False)
-    fx_futs: List = field(init=False)
-    fi_futs: List = field(init=False)
-    pm_futs: List = field(init=False)
-    energy_futs: List = field(init=False)
+    us_eq_idx_futs: List[str] = field(init=False)
+    fx_futs: List[str] = field(init=False)
+    fi_futs: List[str] = field(init=False)
+    pm_futs: List[str] = field(init=False)
+    energy_futs: List[str] = field(init=False)
     # ----FX PAIRS----
-    fx_major_pairs: List = field(init=False)
+    fx_major_pairs: List[str] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.global_universe.read(UNIVERSE_FILEPATH)
         # ----ETFS----
         self.us_eq_sector = self.global_universe["ETFS"]["US_EQ_SECTORS"].split(".")

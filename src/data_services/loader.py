@@ -1,40 +1,62 @@
 import logging
-
-from src.data_services.loaders.api import ApiServiceInitializer
-from src.data_services.loaders.tiingo import Tiingo
-from src.data_services.utils.log_utils import logging_dict
-
-from typing import Optional, Dict
-from dataclasses import dataclass
+from typing import Callable, Optional, Dict
+from dataclasses import dataclass, field
 from configparser import ConfigParser
+
+from data_services.loaders.eodhd import EodQueryOhclv
+from data_services.loaders.api import Service
+from data_services.utils.universe import UniverseQuery
+from data_services.utils.log_utils import logging_dict
+from data_services.utils.fetch_load_utils import file_dumper
+
+from data_services.loaders.eodhd import Eodhd
+
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
+# Initialize universe of tickers
+universe = UniverseQuery()
+
+
+class EtfData:
+    def __init__(self) -> None:
+        ApiService = Service()
+        self.api = ApiService.api
+
+    @file_dumper("Output/ETF/ohclv/commo_etfs")
+    def load_ohlcv(self, eodquery):
+        return self.api.ohlcv(eodquery=eodquery)
+
 
 class MiscellaneousData:
     def __init__(self) -> None:
-        ApiService = ApiServiceInitializer()
-        self.eod = ApiService.eod
-
-        # self.eod.
+        ApiService = Service()
+        self.api = ApiService.api
+        self.api2 = ApiService.api2
 
     def search_security(self, search_query: str):
-        return self.eod.search(query_str=search_query)
+        return self.api.search(search_query=search_query)
         # return self.eod
 
     def get_supported_exchanges(self):
-        return self.eod.get_api_supported_exchanges()
+        return self.api.get_api_supported_exchanges()
 
     def get_traded_tickers(self, exchange_code: str):
-        return self.eod.get_exchange_traded_tickers(exchange_code=exchange_code)
+        return self.api.get_exchange_traded_tickers(exchange_code=exchange_code)
 
     def get_delisted_tickers(self, exchange_code: str):
-        return self.eod.get_exchange_traded_tickers(
+        return self.api.get_exchange_traded_tickers(
             exchange_code=exchange_code, delisted=True
         )
 
+
+if __name__ == "__main__":
+    eodquery = EodQueryOhclv(tickers=["AAPL", "MCD"])
+    print(eodquery.tickers)
+    EtfData = EtfData()
+    EtfData.load_ohlcv(eodquery=eodquery)
 
 # class ExchangeTradedFunds():
 #     # integrate etfs_basket_universe
@@ -63,7 +85,8 @@ class MiscellaneousData:
 # --> format expected
 
 
-# datahandler = datahandler.MiscData()
+# misc = datahandler.MiscData()
+# etf = datahandler.EtfData()
 
 
 # main.EtfBasket().get_crypto_ohclv()
@@ -78,5 +101,8 @@ class MiscellaneousData:
 
 # if __name__ == "__main__":
 #     miscdata = MiscellaneousData()
-#     response = miscdata.search_security(search_query=data)
-#     print(response.json())
+#     miscdata.api
+#     data = miscdata.get_supported_exchanges()
+#     print(data)
+# response = miscdata.search_security(search_query="Goldman")
+# print(response.json())

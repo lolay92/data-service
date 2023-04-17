@@ -30,9 +30,9 @@ class BaseLoader(ABC):
             raise
 
     @abstractmethod
-    def get_api_supported_exchanges(self):
+    def api_supported_exchanges(self):
         pass
 
     @abstractmethod
-    def get_exchange_traded_tickers(self):
+    def exchange_traded_tickers(self):
         pass

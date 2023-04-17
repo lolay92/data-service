@@ -39,8 +39,8 @@ class Tiingo(BaseLoader):
             _logger.exception(e)
             raise
 
-    def get_api_supported_exchanges(self):
+    def api_supported_exchanges(self):
         pass
 
-    def get_exchange_traded_tickers(self):
+    def exchange_traded_tickers(self):
         pass

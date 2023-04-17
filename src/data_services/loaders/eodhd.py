@@ -30,8 +30,8 @@ class EodQueryOhclv:
     """
 
     exchange: str = "US"
-    start: Union[datetime, date] = field(default=(date(2001, 1, 1)))
-    end: Union[datetime, date] = date.today()
+    start: Union[datetime, date] = field(default=(date(2023, 4, 12)))
+    end: Union[datetime, date] = date(2023, 4, 14)
     tickers: List[str] = field(default_factory=List)
 
     @staticmethod
@@ -80,7 +80,7 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response
 
-    def get_api_supported_exchanges(self) -> requests.models.Response:
+    def api_supported_exchanges(self) -> requests.models.Response:
         """
         api supported exchanges in json fmt
         """
@@ -89,7 +89,7 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response
 
-    def get_exchange_traded_tickers(
+    def exchange_traded_tickers(
         self, exchange_code: str, delisted: bool = False
     ) -> requests.models.Response:
         """
@@ -102,14 +102,14 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response
 
-    def get_exchanges_holidays(self):
+    def exchanges_holidays(self):
         pass
 
     async def _fetch_json(self, response):
         json_response = await response.json()
         return json_response
 
-    async def _fetch_ohlcv_async_mode(self, eodquery: EodQueryOhclv) -> List[Dict]:
+    async def _ohlcv_async_mode(self, eodquery: EodQueryOhclv) -> List[Dict]:
         """
         fetch ohclv data asynchronously
         """
@@ -134,12 +134,10 @@ class Eodhd(BaseLoader):
             )
         return responses_json
 
-    def _fetch_ohlcv_bulk_mode(self):
+    def _ohlcv_bulk_mode(self):
         pass
 
-    def fetch_ohlcv(
-        self, eodquery: EodQueryOhclv, bulk_mode: bool = False
-    ) -> List[Dict]:
+    def ohlcv(self, eodquery: EodQueryOhclv, bulk_mode: bool = False) -> List[Dict]:
         """
         Returns ohclv JSON data
         """
@@ -147,6 +145,6 @@ class Eodhd(BaseLoader):
             _logger.error("_fetch_ohlcv_bulk_mode function not implemented yet!")
         else:
             _logger.info("Fetching data...")
-            responses = asyncio.run(self._fetch_ohlcv_async_mode(eodquery=eodquery))
+            responses = asyncio.run(self._ohlcv_async_mode(eodquery=eodquery))
             _logger.info("Fetching Completed!")
         return responses
