@@ -1,5 +1,5 @@
 # About
-This project provides a data collection infrastructure for collecting financial market data from different sources. The project includes a set of loaders for retrieving data from different APIs and a main loader that combines the data from all the sources.
+This project provides an infrastructure for collecting financial market data from different sources. The project includes a set of loaders for retrieving data from different APIs and a main loader that combines the data from all the sources.
 
 # Project Roadmap
 - [x] Poetry for python packages and dependencies management
