@@ -58,7 +58,7 @@ class Etf(Service):
         """ohlcv ETF data"""
         return self.eod.ohlcv(eodquery=eodquery)
 
-    def get_index_components(self):
+    def get_components(self):
         pass
 
 
