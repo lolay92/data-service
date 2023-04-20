@@ -4,7 +4,7 @@ This project provides an infrastructure for collecting financial market data fro
 # Project Roadmap
 - [x] Poetry for python packages and dependencies management
 - [x] Logging configuration
-- [ ] System implementation for multiple API sources
+- [x] System implementation for multiple API sources
 - [ ] Set up a manager for file storage/archivage
 - [ ] Containerize with Docker
 - [ ] Unitary tests with Pytest
@@ -49,11 +49,11 @@ The project has the following directory structure:
 - **'utils'** sub-module contains utility functions and constants
 - **'tests'** directory contains test code for the project
 
-# Installation procedure 
+<!-- # Installation procedure 
 To be completed soon...
 
 # Containerization with Docker
-To be completed soon...
+To be completed soon... -->
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
