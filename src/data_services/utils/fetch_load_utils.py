@@ -11,7 +11,7 @@ def pkl_dump(filepath, data):
         filepath_parent_dir = filepath.parent
         filepath_parent_dir.mkdir(parents=True, exist_ok=True)
         filepath.touch()
-    with open(filepath, "a+") as output_file:
+    with open(filepath, "w") as output_file:
         print(f"data to be printed: {data}")
         json.dump(data, output_file, indent=4)
 
@@ -34,6 +34,7 @@ def file_dumper(filepath_parent):
 # ---------RESPONSE HANDLER
 
 
+# -------------------------
 # async def pkl_dump(filepath, data):
 #     # Perform all necessary checks for file existence
 #     filepath = Path(filepath)

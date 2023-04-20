@@ -23,9 +23,9 @@ if platform.system() == "Windows":
 
 
 @dataclass
-class EodQueryOhclv:
+class EodQueryOhlcv:
     """
-    Build tand returns a list of async
+    Build and returns a query datamodel for eodhistoricaldata requests
     Currently, queries for multiple tickers is possible only for same exchange
     """
 
@@ -35,7 +35,7 @@ class EodQueryOhclv:
     tickers: List[str] = field(default_factory=List)
 
     @staticmethod
-    def get_urls_queries(eodquery: "EodQueryOhclv", root_url: str) -> List[str]:
+    def get_urls_queries(eodquery: "EodQueryOhlcv", root_url: str) -> List[str]:
         """
         Returns a list of all urls to be requested
         """
@@ -109,7 +109,7 @@ class Eodhd(BaseLoader):
         json_response = await response.json()
         return json_response
 
-    async def _ohlcv_async_mode(self, eodquery: EodQueryOhclv) -> List[Dict]:
+    async def _ohlcv_async_mode(self, eodquery: EodQueryOhlcv) -> List[Dict]:
         """
         fetch ohlcv data asynchronously
         """
@@ -122,7 +122,7 @@ class Eodhd(BaseLoader):
         )
         # Asynchronous requests
         async with aiohttp.ClientSession() as aiohttp_session:
-            urls = EodQueryOhclv.get_urls_queries(
+            urls = EodQueryOhlcv.get_urls_queries(
                 eodquery=eodquery, root_url=Eodhd.ROOT_URL
             )
 
@@ -137,7 +137,7 @@ class Eodhd(BaseLoader):
     def _ohlcv_bulk_mode(self):
         pass
 
-    def ohlcv(self, eodquery: EodQueryOhclv, bulk_mode: bool = False) -> List[Dict]:
+    def ohlcv(self, eodquery: EodQueryOhlcv, bulk_mode: bool = False) -> List[Dict]:
         """
         Returns ohlcv JSON data
         """
