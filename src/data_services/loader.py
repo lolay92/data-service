@@ -16,7 +16,7 @@ logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Service:
     """Service base class to initialize the relevant api for data services"""
 
@@ -31,7 +31,7 @@ class ExoticData(Service):
     def __init__(self) -> None:
         super().__init__()
 
-    def utility_search(self, query: str):
+    def util_search(self, query: str):
         return self.eod.search(search_query=query)
 
     def get_supported_exchanges(self, api: "str"):
@@ -57,6 +57,9 @@ class Etf(Service):
     def load_ohlcv(self, eodquery: EodQueryOhlcv):
         """ohlcv ETF data"""
         return self.eod.ohlcv(eodquery=eodquery)
+
+    def get_index_components(self):
+        pass
 
 
 class Crypto(Service):
