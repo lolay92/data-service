@@ -63,14 +63,14 @@ class Eodhd(BaseLoader):
             if self.api_key is None:
                 raise InvalidEodKeyError(f"{Eodhd.API_KEY_NAME} cannot be None!")
             self.params = {
-                "api_token": "demo",
+                "api_token": self.api_key,
                 "fmt": "json",
             }
         except InvalidEodKeyError as e:
             _logger.exception(e)
             raise
 
-    def search(self, search_query: str, limit: int = 50) -> requests.models.Response:
+    def search(self, search_query: str, limit: int = 50) -> List[Dict]:
         """
         Returns all elements relative to the query from eod search api
         """
@@ -78,20 +78,20 @@ class Eodhd(BaseLoader):
         url = f"{Eodhd.ROOT_URL}/search/{search_query}"
         with requests.Session() as requests_session:
             response = requests_session.get(url=url, params=self.params)
-        return response
+        return response.json()
 
-    def api_supported_exchanges(self) -> requests.models.Response:
+    def api_supported_exchanges(self) -> List[Dict]:
         """
         api supported exchanges in json fmt
         """
         url = f"{Eodhd.ROOT_URL}/exchanges-list/"
         with requests.Session() as requests_session:
             response = requests_session.get(url=url, params=self.params)
-        return response
+        return response.json()
 
     def exchange_traded_tickers(
         self, exchange_code: str, delisted: bool = False
-    ) -> requests.models.Response:
+    ) -> List[Dict]:
         """
         Get traded tickers from api
         """
@@ -100,7 +100,7 @@ class Eodhd(BaseLoader):
         url = f"{Eodhd.ROOT_URL}/exchange-symbol-list/{exchange_code}"
         with requests.Session() as requests_session:
             response = requests_session.get(url=url, params=self.params)
-        return response
+        return response.json()
 
     def exchanges_holidays(self):
         pass
