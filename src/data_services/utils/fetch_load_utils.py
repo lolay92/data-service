@@ -1,8 +1,15 @@
-import pickle
-import json
 import pandas as pd
-from pathlib import Path
 from functools import wraps
+from datetime import datetime, date
+
+
+# ---------PREPROCESSIND DATAFRAME
+def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Preprocess time series raw dataframe."""
+    df.date = pd.to_datetime(df.date)
+    df.sort_values(by="date", inplace=True)
+    df.set_index("date", inplace=True)
+    return df
 
 
 # ---------FILE MANAGER
@@ -10,17 +17,16 @@ def file_dump(filepath: str):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            responses_data = func(*args, **kwargs)
-            eodquery = kwargs["eodquery"]
-            tickers = eodquery.tickers
-            # Create file for appending if it not exists already
-            filepath = Path(filepath)
-            filepath.touch(exist_ok=True)
-            with pd.HDFStore(filepath, mode="a") as store:
-                for ticker, resp in zip(tickers, responses_data):
-                    store["ticker"] = resp
+            func_results = func(*args, **kwargs)
+            tickers = func_results[0]
 
-            return responses_data
+            with pd.HDFStore(filepath, mode="a") as store:
+                for ticker, result in zip(tickers, func_results[1]):
+                    result_df = pd.DataFrame(result)
+                    result_df = preprocess_df(result_df)
+                    store.append(ticker, result_df)
+
+            return func_results
 
         return wrapper
 
