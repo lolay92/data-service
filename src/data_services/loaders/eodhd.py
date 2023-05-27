@@ -3,7 +3,6 @@ import requests
 import asyncio
 import aiohttp
 import logging
-import json
 
 from typing import List, Union, Dict
 from dataclasses import dataclass, field
@@ -63,7 +62,7 @@ class Eodhd(BaseLoader):
             if self.api_key is None:
                 raise InvalidEodKeyError(f"{Eodhd.API_KEY_NAME} cannot be None!")
             self.params = {
-                "api_token": self.api_key,
+                "api_token": "demo",
                 "fmt": "json",
             }
         except InvalidEodKeyError as e:
@@ -146,5 +145,4 @@ class Eodhd(BaseLoader):
         else:
             _logger.info("Fetching data...")
             responses = asyncio.run(self._ohlcv_async_mode(eodquery=eodquery))
-            _logger.info("Fetching Completed!")
         return responses
