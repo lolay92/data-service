@@ -136,13 +136,14 @@ class Eodhd(BaseLoader):
     def _ohlcv_bulk_mode(self):
         pass
 
-    def ohlcv(self, eodquery: EodQueryOhlcv, bulk_mode: bool = False) -> List[Dict]:
+    async def ohlcv(
+        self, eodquery: EodQueryOhlcv, bulk_mode: bool = False
+    ) -> List[Dict]:
         """
         Returns ohlcv JSON data
         """
         if bulk_mode:
             _logger.error("_fetch_ohlcv_bulk_mode function not implemented yet!")
         else:
-            _logger.info("Fetching data...")
-            responses = asyncio.run(self._ohlcv_async_mode(eodquery=eodquery))
+            responses = await self._ohlcv_async_mode(eodquery=eodquery)
         return responses
