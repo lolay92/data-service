@@ -16,8 +16,8 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
 def file_dump(filepath: str):
     def decorator(func):
         @wraps(func)
-        def wrapper(*args, **kwargs):
-            func_results = func(*args, **kwargs)
+        async def wrapper(*args, **kwargs):
+            func_results = await func(*args, **kwargs)
             tickers = func_results[0]
 
             with pd.HDFStore(filepath, mode="a") as store:
