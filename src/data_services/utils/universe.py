@@ -1,50 +1,61 @@
 from pprint import pprint
-from typing import List
-from dataclasses import dataclass, field
+from typing import List, Union, Dict
+from dataclasses import dataclass, field, InitVar
 from configparser import ConfigParser
+from enum import Enum
 
 UNIVERSE_FILEPATH = "src/data_services/utils/constants/universe.ini"
 
 
-@dataclass
-class UniverseQuery:
-    global_universe: ConfigParser = field(init=False, default_factory=ConfigParser)
-    # ----ETF----
-    us_eq_sector: List[str] = field(init=False)
-    us_eq_index: List[str] = field(init=False)
-    eq_dev_country: List[str] = field(init=False)
-    eq_em_country: List[str] = field(init=False)
-    us_fi_etf: List[str] = field(init=False)
-    commo_etf: List[str] = field(init=False)
-    # ----FUTURES----
-    us_eq_idx_fut: List[str] = field(init=False)
-    fi_fut: List[str] = field(init=False)
-    pm_fut: List[str] = field(init=False)
-    energy_fut: List[str] = field(init=False)
-    # ----FX PAIRS----
-    fx_major_pairs: List[str] = field(init=False)
+class UniverseMap(Enum):
+    US_EQ_SECTOR = ("us_eq_sector", "ETF")
+    US_EQ_INDEX = ("us_eq_index", "ETF")
+    EQ_DEV_COUNTRY = ("eq_dev_country", "ETF")
+    EQ_EM_COUNTRY = ("eq_em_country", "ETF")
+    US_FI_ETF = ("us_fi_etf", "ETF")
+    COMMO_ETF = ("commo_etf", "ETF")
+    US_EQ_IDX_FUT = ("us_eq_idx_fut", "FUT")
+    FI_FUT = ("fi_fut", "FUT")
+    PM_FUT = ("pm_fut", "FUT")
+    ENERGY_FUT = ("energy_fut", "FUT")
+    FX_MAJOR_PAIRS = ("fx_major_pairs", "FX")
 
-    def __post_init__(self) -> None:
-        self.global_universe.read(UNIVERSE_FILEPATH)
-        # ----ETF----
-        self.us_eq_sector = self.global_universe["ETF"]["US_EQ_SECTOR"].split(".")
-        self.us_eq_index = self.global_universe["ETF"]["US_EQ_INDEX"].split(".")
-        self.eq_dev_country = self.global_universe["ETF"]["EQ_DEV_COUNTRY"].split(".")
-        self.eq_em_country = self.global_universe["ETF"]["EQ_EM_COUNTRY"].split(".")
-        self.us_fi_etf = self.global_universe["ETF"]["US_FI_ETF"].split(".")
-        self.commo_etf = self.global_universe["ETF"]["COMMO_ETF"].split(".")
-        # ----FUTURES----
-        self.us_eq_idx_fut = self.global_universe["FUT"]["US_EQ_IDX_FUT"].split(".")
-        self.fi_fut = self.global_universe["FUT"]["FI_FUT"].split(".")
-        self.pm_fut = self.global_universe["FUT"]["PM_FUT"].split(".")
-        self.energy_fut = self.global_universe["FUT"]["ENERGY_FUT"].split(".")
-        # ----FX PAIRS----
-        self.fx_major_pairs = self.global_universe["FX"]["FX_MAJOR_PAIRS"].split(".")
-        # ----CRYPTO----
-        # To implement
+    def __new__(cls, value, category):
+        obj = object.__new__(cls)
+        obj._value_ = value
+        obj.category = category
+        return obj
 
-    def print_global_universe(self):
-        pprint(self.global_universe._sections)
 
-    def build_Universe(self):
-        pass
+@dataclass(frozen=True)
+class QueryUniverse:
+    """Allows querying universe properties and components.
+    E.g.:
+    universe = QueryUniverse(UniverseMap.ENERGY_FUT)
+    universe.global_universe
+    print(universe.universe_properties.name)
+    print(universe.universe_properties.value)
+    print(universe.universe_properties.category)
+    print(universe.components)
+
+    universe has properties, global universe and constituents as attributes
+    universe.properties has value, name and category as attributes
+
+    So we should be able to do something like this:
+
+    universe.properties.name ==> 'ENERGY_FUT'
+    universe.properties.value ==> 'energy_fut'
+    universe.properties.category ==> 'FUT'
+    print(universe.print_global_universe())"""
+
+    universe_properties: UniverseMap
+
+    def __post_init__(self):
+        _global_universe: ConfigParser = ConfigParser()
+        _global_universe.read(UNIVERSE_FILEPATH)
+        self.global_universe: Dict[str, Dict[str, str]] = pprint(
+            _global_universe._sections
+        )
+        self.components: List[str] = _global_universe[
+            self.universe_properties.category
+        ][self.universe_properties.name].split(".")
