@@ -1,6 +1,5 @@
-from pprint import pprint
-from typing import List, Union, Dict
-from dataclasses import dataclass, field, InitVar
+from typing import List, Dict
+from dataclasses import dataclass
 from configparser import ConfigParser
 from enum import Enum
 
@@ -27,7 +26,7 @@ class UniverseMap(Enum):
         return obj
 
 
-@dataclass(frozen=True)
+@dataclass
 class QueryUniverse:
     """Allows querying universe properties and components.
     E.g.:
@@ -48,14 +47,12 @@ class QueryUniverse:
     universe.properties.category ==> 'FUT'
     print(universe.print_global_universe())"""
 
-    universe_properties: UniverseMap
+    properties: UniverseMap
 
     def __post_init__(self):
         _global_universe: ConfigParser = ConfigParser()
         _global_universe.read(UNIVERSE_FILEPATH)
-        self.global_universe: Dict[str, Dict[str, str]] = pprint(
-            _global_universe._sections
-        )
-        self.components: List[str] = _global_universe[
-            self.universe_properties.category
-        ][self.universe_properties.name].split(".")
+        self.global_universe: Dict[str, Dict[str, str]] = _global_universe._sections
+        self.components: List[str] = _global_universe[self.properties.category][
+            self.properties.name
+        ].split(".")
