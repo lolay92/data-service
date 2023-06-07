@@ -8,10 +8,10 @@ from pathlib import Path
 
 from data_services.loaders.eodhd import Eodhd, EodQueryOhlcv
 from data_services.loaders.tiingo import Tiingo, TiingoQueryIntraday
-from data_services.utils.universe import UniverseQuery
+from data_services.utils.universe import UniverseMap, QueryUniverse
 
 from data_services.utils.log_utils import logging_dict
-from data_services.utils.fetch_load_utils import file_dump
+from data_services.utils.fetch_utils import file_dump
 
 # Output locations
 OUTPUT_BASE_DIR = Path(__file__).resolve().parents[2]
@@ -32,6 +32,8 @@ OUTPUT_CRYPTO_INTRADAY.mkdir(parents=True, exist_ok=True)
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
+from enum import Enum
+
 
 @dataclass(frozen=True)
 class Service:
@@ -39,10 +41,11 @@ class Service:
 
     eod: Eodhd = Eodhd()
     tiingo: Tiingo = Tiingo()
-    universe: UniverseQuery = field(default_factory=UniverseQuery)
+    # universe: QueryUniverse = field(default_factory=QueryUniverse)
 
 
-class miscData(Service):
+# -------- Miscellaneous data ----------------------------------------------------------------------------
+class MiscData(Service):
     """Requests and load miscellaneous data"""
 
     def __init__(self) -> None:
@@ -82,139 +85,91 @@ class Etf(Service):
     def get_etf_components(self):
         pass
 
-    def load_etf_specific_universe(
+    @file_dump
+    async def _load_etf_universe_async(
         self,
-        universe: str,
-        save_file: bool,
         start: Union[datetime, date],
         end: Union[datetime, date],
-    ) -> Tuple[List[str], List[Dict]]:
-        """loads a specific etf universe for a specific period:
-        universe should be one of the following:
-        - us_eq_sector
-        - us_eq_index
-        - eq_dev_country
-        - eq_em_country
-        - us_fi_etf
-        - commo_etf
+        universe_type: UniverseMap,
+    ):
         """
-        load_func = getattr(self, f"load_{universe.lower()}")
+        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for a defined universe,
+        as specified in the global universe configuration file.
+        """
+        universe = QueryUniverse(universe_type)
+        _logger.info(f"Ohlcv retrieval for {universe.properties.value} etfs...")
+        eodquery = EodQueryOhlcv(start=start, end=end, tickers=universe.components)
+        ohlcv_data = await self.eod.ohlcv(eodquery=eodquery)
+        filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.properties.value}.h5"
+        _logger.info(f"Retrieval done for {universe.properties.value} etfs! ")
+        return filepath_universe, eodquery.tickers, ohlcv_data
 
-        if save_file:
-            data = asyncio.run(load_func(start=start, end=end))
+    def load_etf_universe(
+        self,
+        universe_type: UniverseMap,
+        start: Union[datetime, date],
+        end: Union[datetime, date],
+        save_to_file: bool = False,
+    ) -> Tuple[List[str], List[Dict]]:
+        """loads a specific etf universe for a specific period"""
+
+        if save_to_file:
+            return asyncio.run(
+                self._load_etf_universe_async(
+                    start=start, end=end, universe_type=universe_type
+                )
+            )
         else:
-            load_func = load_func.__wrapped__
-            data = asyncio.run(load_func(self, start=start, end=end))
-        return data
+            load_func = self._load_etf_universe_async.__wrapped__
+            return asyncio.run(
+                load_func(self, start=start, end=end, universe_type=universe_type)
+            )
 
-    def load_all_ohlcv(self, start: Union[datetime, date], end: Union[datetime, date]):
+    def load_all_etf(self, start: Union[datetime, date], end: Union[datetime, date]):
         """Loads all etfs data asynchronously for a specific period."""
 
-        async def _load_data_async():
+        async def _load_all_etf_async():
             """Create asynchronous tasks for global ETF universe retrieval."""
 
             tasks = [
-                asyncio.create_task(self.load_us_eq_sector(start=start, end=end)),
-                asyncio.create_task(self.load_us_eq_index(start=start, end=end)),
-                asyncio.create_task(self.load_eq_dev_country(start=start, end=end)),
-                asyncio.create_task(self.load_eq_em_country(start=start, end=end)),
-                asyncio.create_task(self.load_us_fi_etf(start=start, end=end)),
-                asyncio.create_task(self.load_commo_etf(start=start, end=end)),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.US_EQ_SECTOR
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.US_EQ_INDEX
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.EQ_DEV_COUNTRY
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.EQ_EM_COUNTRY
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.US_FI_ETF
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe_type=UniverseMap.COMMO_ETF
+                    )
+                ),
             ]
 
             return await asyncio.gather(*tasks)
 
-        data = asyncio.run(_load_data_async())
+        data = asyncio.run(_load_all_etf_async())
         _logger.info(f"All OHLCV retrievals for ETFs completed!")
 
         return data
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/us_eq_sector.h5")
-    async def load_us_eq_sector(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for us equity sector etfs,
-        as specified in the global universe configuration file.
-        """
-        _logger.info(f"Ohlcv retrieval for us equity sector etfs...")
-        # us_eq_sector_universe = self.universe.us_eq_sector
-        us_eq_sector_universe = ["MCD", "AAPL"]
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=us_eq_sector_universe)
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/us_eq_index.h5")
-    async def load_us_eq_index(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for us equity main indices,
-        as specified in the global universe configuration.
-        """
-        _logger.info(f"Ohlcv retrieval for us equity main indices...")
-        us_eq_index_universe = self.universe.us_eq_index
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=us_eq_index_universe)
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/eq_dev_country_etf.h5")
-    async def load_eq_dev_country(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for developed countries equity etfs,
-        as specified in the global universe configuration.
-        """
-        _logger.info(f"Ohlcv retrieval for developed countries equity etfs...")
-        us_eq_dev_country_universe = self.universe.eq_dev_country
-        eodquery = EodQueryOhlcv(
-            start=start, end=end, tickers=us_eq_dev_country_universe
-        )
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/eq_em_country_etf.h5")
-    async def load_eq_em_country(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for emerging countries equity etfs,
-        as specified in the global universe configuration.
-        """
-        _logger.info(f"Ohlcv retrieval for emerging countries equity etfs...")
-        eq_em_country_universe = self.universe.eq_em_country
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=eq_em_country_universe)
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/us_fi_etf.h5")
-    async def load_us_fi_etf(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for us fixed income etfs,
-        as specified in the global universe configuration.
-        """
-        _logger.info(f"Ohlcv retrieval for us fixed income etfs...")
-        us_fi_etf_universe = self.universe.us_fi_etf
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=us_fi_etf_universe)
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
-
-    @file_dump(f"{OUTPUT_ETF_OHLCV}/commo_etf.h5")
-    async def load_commo_etf(
-        self, start: Union[datetime, date], end: Union[datetime, date]
-    ) -> Tuple[List[str], List[Dict]]:
-        """
-        Loads historical Open-High-Low-Close-Volume (OHLCV) data for commodity etfs as specified in the
-        global universe configuration.
-        """
-        _logger.info(f"Ohlcv retrieval for commodity etfs...")
-        commo_etf_universe = self.universe.commo_etf
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=commo_etf_universe)
-        ohlcv = await self.eod.ohlcv(eodquery=eodquery)
-        return eodquery.tickers, ohlcv
 
 
 # -------- CRYPTO ---------------------------------------------------------------------------------------
