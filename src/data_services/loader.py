@@ -2,13 +2,13 @@ import logging
 import json
 import asyncio
 from datetime import datetime, date
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Type
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from data_services.loaders.eodhd import Eodhd, EodQueryOhlcv
 from data_services.loaders.tiingo import Tiingo, TiingoQueryIntraday
-from data_services.utils.universe import UniverseMap, QueryUniverse
+from data_services.utils.universe import Universe, QueryUniverse
 
 from data_services.utils.log_utils import logging_dict
 from data_services.utils.fetch_utils import file_dump
@@ -32,7 +32,8 @@ OUTPUT_CRYPTO_INTRADAY.mkdir(parents=True, exist_ok=True)
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
-from enum import Enum
+# define types
+UniverseType = Type[Universe]
 
 
 @dataclass(frozen=True)
@@ -90,23 +91,23 @@ class Etf(Service):
         self,
         start: Union[datetime, date],
         end: Union[datetime, date],
-        universe_type: UniverseMap,
+        universe: UniverseType,
     ):
         """
         Returns a list of historical Open-High-Low-Close-Volume (OHLCV) data for a defined universe,
         as specified in the global universe configuration file.
         """
-        universe = QueryUniverse(universe_type)
-        _logger.info(f"Ohlcv retrieval for {universe.properties.value} etfs...")
+
+        _logger.info(f"Ohlcv retrieval for {universe.value} etfs...")
         eodquery = EodQueryOhlcv(start=start, end=end, tickers=universe.components)
         ohlcv_data = await self.eod.ohlcv(eodquery=eodquery)
-        filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.properties.value}.h5"
-        _logger.info(f"Retrieval done for {universe.properties.value} etfs! ")
+        filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.value}.h5"
+        _logger.info(f"Retrieval done for {universe.value} etfs! ")
         return filepath_universe, eodquery.tickers, ohlcv_data
 
     def load_etf_universe(
         self,
-        universe_type: UniverseMap,
+        universe: UniverseType,
         start: Union[datetime, date],
         end: Union[datetime, date],
         save_to_file: bool = False,
@@ -115,15 +116,11 @@ class Etf(Service):
 
         if save_to_file:
             return asyncio.run(
-                self._load_etf_universe_async(
-                    start=start, end=end, universe_type=universe_type
-                )
+                self._load_etf_universe_async(start=start, end=end, universe=universe)
             )
         else:
             load_func = self._load_etf_universe_async.__wrapped__
-            return asyncio.run(
-                load_func(self, start=start, end=end, universe_type=universe_type)
-            )
+            return asyncio.run(load_func(self, start=start, end=end, universe=universe))
 
     def load_all_etf(self, start: Union[datetime, date], end: Union[datetime, date]):
         """Loads all etfs data asynchronously for a specific period."""
@@ -134,32 +131,32 @@ class Etf(Service):
             tasks = [
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.US_EQ_SECTOR
+                        start=start, end=end, universe=Universe.US_EQ_SECTOR
                     )
                 ),
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.US_EQ_INDEX
+                        start=start, end=end, universe=Universe.US_EQ_INDEX
                     )
                 ),
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.EQ_DEV_COUNTRY
+                        start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
                     )
                 ),
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.EQ_EM_COUNTRY
+                        start=start, end=end, universe=Universe.EQ_EM_COUNTRY
                     )
                 ),
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.US_FI_ETF
+                        start=start, end=end, universe=Universe.US_FI_ETF
                     )
                 ),
                 asyncio.create_task(
                     self._load_etf_universe_async(
-                        start=start, end=end, universe_type=UniverseMap.COMMO_ETF
+                        start=start, end=end, universe=Universe.COMMO_ETF
                     )
                 ),
             ]
@@ -185,3 +182,8 @@ class Futures(Service):
 # -------- MACRO -----------------------------------------------------------------------------------------
 class Macro(Service):
     pass
+
+
+if __name__ == "__main__":
+    data = Etf()
+    data.load_all_etf(start=date(2023, 1, 1), end=date(2023, 3, 31))
