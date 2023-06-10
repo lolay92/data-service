@@ -1,6 +1,3 @@
-from typing import List, Dict, Type
-from dataclasses import dataclass
-from configparser import ConfigParser
 from enum import Enum
 
 
@@ -40,42 +37,6 @@ class Universe(Enum):
         obj.components = components.split(".")
         return obj
 
-
-# @dataclass
-# class QueryUniverse:
-#     """Allows querying universe properties and components.
-#     E.g.:
-#     >> universe = QueryUniverse(UniverseMap.ENERGY_FUT)
-#     >> universe.global_universe
-#     >> print(universe.universe_properties.name)
-#     >> print(universe.universe_properties.value)
-#     >> print(universe.universe_properties.category)
-#     >> print(universe.components)
-
-#     universe has properties, global universe and constituents as attributes
-#     universe.properties has value, name and category as attributes
-
-#     So we should be able to do something like this:
-
-#     >> universe.properties.name ==> 'ENERGY_FUT'
-#     >> universe.properties.value ==> 'energy_fut'
-#     >> universe.properties.category ==> 'FUT'
-#     >> print(universe.print_global_universe())"""
-
-#     properties: Universe
-
-#     def __post_init__(self):
-#         _global_universe: ConfigParser = ConfigParser()
-#         _global_universe.read(UNIVERSE_FILEPATH)
-#         self.global_universe: Dict[str, Dict[str, str]] = _global_universe._sections
-#         self.components: List[str] = _global_universe[self.properties.value[1]][
-#             self.properties.name
-#         ].split(".")
-
-
-# if __name__ == "__main__":
-#     components = Universe.COMMO_ETF.components
-#     print(components)
 
 # ---------------- DESCRIPTIONS ---------------------------------------------------------------
 # Fixed-Income US ETFs

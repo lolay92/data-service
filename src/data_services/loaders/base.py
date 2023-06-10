@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 from data_services.utils.log_utils import logging_dict
-from data_services.utils.mykey import get_api_keys
+from data_services.utils.mykeys import get_api_keys
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)

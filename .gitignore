@@ -6,6 +6,11 @@ logs/
 src/data_services/utils/constants/mykey.ini
 data.json
 .venv/
-
-
-#  Infrastructure for a market data collection system from multiples APIs sources
+.DS_Store
+.vscode/
+Tech_Spec.txt
+sandbox.ipynb
+src/.DS_Store
+src/data_services/utils/constants/keys.ini
+src/data_services/utils/mykeys.py
+todo.txt

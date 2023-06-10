@@ -8,7 +8,7 @@ from pathlib import Path
 
 from data_services.loaders.eodhd import Eodhd, EodQueryOhlcv
 from data_services.loaders.tiingo import Tiingo, TiingoQueryIntraday
-from data_services.utils.universe import Universe, QueryUniverse
+from data_services.utils.universe import Universe
 
 from data_services.utils.log_utils import logging_dict
 from data_services.utils.fetch_utils import file_dump
@@ -134,31 +134,31 @@ class Etf(Service):
                         start=start, end=end, universe=Universe.US_EQ_SECTOR
                     )
                 ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.US_EQ_INDEX
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.EQ_EM_COUNTRY
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.US_FI_ETF
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.COMMO_ETF
-                    )
-                ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.US_EQ_INDEX
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.EQ_EM_COUNTRY
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.US_FI_ETF
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.COMMO_ETF
+                #     )
+                # ),
             ]
 
             return await asyncio.gather(*tasks)
@@ -182,8 +182,3 @@ class Futures(Service):
 # -------- MACRO -----------------------------------------------------------------------------------------
 class Macro(Service):
     pass
-
-
-if __name__ == "__main__":
-    data = Etf()
-    data.load_all_etf(start=date(2023, 1, 1), end=date(2023, 3, 31))
