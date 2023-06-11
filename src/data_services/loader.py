@@ -134,31 +134,31 @@ class Etf(Service):
                         start=start, end=end, universe=Universe.US_EQ_SECTOR
                     )
                 ),
-                # asyncio.create_task(
-                #     self._load_etf_universe_async(
-                #         start=start, end=end, universe=Universe.US_EQ_INDEX
-                #     )
-                # ),
-                # asyncio.create_task(
-                #     self._load_etf_universe_async(
-                #         start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
-                #     )
-                # ),
-                # asyncio.create_task(
-                #     self._load_etf_universe_async(
-                #         start=start, end=end, universe=Universe.EQ_EM_COUNTRY
-                #     )
-                # ),
-                # asyncio.create_task(
-                #     self._load_etf_universe_async(
-                #         start=start, end=end, universe=Universe.US_FI_ETF
-                #     )
-                # ),
-                # asyncio.create_task(
-                #     self._load_etf_universe_async(
-                #         start=start, end=end, universe=Universe.COMMO_ETF
-                #     )
-                # ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe=Universe.US_EQ_INDEX
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe=Universe.EQ_EM_COUNTRY
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe=Universe.US_FI_ETF
+                    )
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(
+                        start=start, end=end, universe=Universe.COMMO_ETF
+                    )
+                ),
             ]
 
             return await asyncio.gather(*tasks)
