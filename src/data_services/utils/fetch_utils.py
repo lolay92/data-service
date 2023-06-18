@@ -33,8 +33,7 @@ def file_dump(func):
                 df = preprocess_df(pd.DataFrame(ticker_ts_data))
                 # Handle duplicates for existing ticker
                 if f"/{ticker}" in store.keys():
-                    existing_df = store[ticker]
-                    remove_duplicates(existing_df, df)
+                    remove_duplicates(store[ticker], df)
                     del existing_df
                 # Append new data to existing ticker or create new table for a new ticker
                 store.append(ticker, df)
