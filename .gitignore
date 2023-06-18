@@ -14,3 +14,4 @@ src/.DS_Store
 src/data_services/utils/constants/keys.ini
 src/data_services/utils/mykeys.py
 todo.txt
+.env
