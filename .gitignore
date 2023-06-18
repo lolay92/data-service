@@ -1,6 +1,7 @@
 src/data_services/__pycache__/
 src/data_services/*/__pycache__/
 tests/__pycache__/
+tests/.pytest_cache
 output/
 logs/
 src/data_services/utils/constants/mykey.ini
