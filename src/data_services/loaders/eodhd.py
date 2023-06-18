@@ -4,43 +4,14 @@ import asyncio
 import aiohttp
 import logging
 
-from typing import List, Union, Dict
-from dataclasses import dataclass, field
-from datetime import datetime, date
+from typing import List, Dict
 
-from data_services.loaders.base import BaseLoader
+from data_services.loaders.base import BaseLoader, Api, DataQuery
 from data_services.utils.log_utils import logging_dict
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
-
-# Work around solution to avoid RuntimeError from event loop policy
-# that can appear for windows systems when working with asyncio
-if platform.system() == "Windows":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-
-@dataclass
-class EodQueryOhlcv:
-    """
-    Build and returns a query datamodel for eodhistoricaldata requests
-    Currently, queries for multiple tickers is possible only for same exchange
-    """
-
-    exchange: str = "US"
-    start: Union[datetime, date] = field(default=(date(2023, 4, 11)))
-    end: Union[datetime, date] = date(2023, 4, 12)
-    tickers: List[str] = field(default_factory=List)
-
-    @staticmethod
-    def get_urls_queries(eodquery: "EodQueryOhlcv", root_url: str) -> List[str]:
-        """
-        Returns a list of all urls to be requested
-        """
-        tickers = eodquery.tickers
-        urls = [f"{root_url}/eod/{ticker}.{eodquery.exchange}" for ticker in tickers]
-        return urls
 
 
 class EodhdError(Exception):
@@ -52,15 +23,14 @@ class InvalidEodKeyError(EodhdError):
 
 
 class Eodhd(BaseLoader):
-    API_KEYS_SECTION_NAME = "API_KEYS"
-    API_KEY_NAME = "eodhd_api_key"
+    API = Api.EOD
     ROOT_URL = "https://eodhistoricaldata.com/api"
 
     def __init__(self) -> None:
         super().__init__()
         try:
             if self.api_key is None:
-                raise InvalidEodKeyError(f"{Eodhd.API_KEY_NAME} cannot be None!")
+                raise InvalidEodKeyError(f"api_key cannot be None type!")
             self.params = {
                 "api_token": "demo",
                 "fmt": "json",
@@ -69,17 +39,7 @@ class Eodhd(BaseLoader):
             _logger.exception(e)
             raise
 
-    def search(self, search_query: str, limit: int = 50) -> List[Dict]:
-        """
-        Returns all elements relative to the query from eod search api
-        """
-        self.params.update({"limit": limit})
-        url = f"{Eodhd.ROOT_URL}/search/{search_query}"
-        with requests.Session() as requests_session:
-            response = requests_session.get(url=url, params=self.params)
-        return response.json()
-
-    def api_supported_exchanges(self) -> List[Dict]:
+    def supported_exchanges(self) -> List[Dict]:
         """
         api supported exchanges in json fmt
         """
@@ -101,49 +61,47 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response.json()
 
-    def exchanges_holidays(self):
-        pass
+    def search(self, search_query: str, limit: int = 50) -> List[Dict]:
+        """
+        Returns all elements relative to the query from eod search api
+        """
+        self.params.update({"limit": limit})
+        url = f"{Eodhd.ROOT_URL}/search/{search_query}"
+        with requests.Session() as requests_session:
+            response = requests_session.get(url=url, params=self.params)
+        return response.json()
 
-    async def _fetch_json(self, response):
-        json_response = await response.json()
-        return json_response
-
-    async def _ohlcv_async_mode(self, eodquery: EodQueryOhlcv) -> List[Dict]:
+    async def ohlcv(
+        self,
+        ohlcv_query: DataQuery,
+    ) -> List[Dict]:
         """
         fetch ohlcv data asynchronously
         """
         # Updating http request parameters
         self.params.update(
             {
-                "from": eodquery.start.strftime("%Y-%m-%d"),
-                "to": eodquery.end.strftime("%Y-%m-%d"),
+                "from": ohlcv_query.start.strftime("%Y-%m-%d"),
+                "to": ohlcv_query.end.strftime("%Y-%m-%d"),
             }
         )
+
+        # Get json data asynchronously
+        async def _fetch_json(response):
+            json_response = await response.json()
+            return json_response
+
         # Asynchronous requests
         async with aiohttp.ClientSession() as aiohttp_session:
-            urls = EodQueryOhlcv.get_urls_queries(
-                eodquery=eodquery, root_url=Eodhd.ROOT_URL
-            )
+            urls = [
+                f"{Eodhd.ROOT_URL}/eod/{ticker}.{ohlcv_query.exchange}"
+                for ticker in ohlcv_query.tickers
+            ]
 
             tasks = [aiohttp_session.get(url, params=self.params) for url in urls]
 
             responses = await asyncio.gather(*tasks)
             responses_json = await asyncio.gather(
-                *[self._fetch_json(response) for response in responses]
+                *[_fetch_json(response) for response in responses]
             )
         return responses_json
-
-    def _ohlcv_bulk_mode(self):
-        pass
-
-    async def ohlcv(
-        self, eodquery: EodQueryOhlcv, bulk_mode: bool = False
-    ) -> List[Dict]:
-        """
-        Returns ohlcv JSON data
-        """
-        if bulk_mode:
-            _logger.error("_fetch_ohlcv_bulk_mode function not implemented yet!")
-        else:
-            responses = await self._ohlcv_async_mode(eodquery=eodquery)
-        return responses

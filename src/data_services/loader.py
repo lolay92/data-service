@@ -1,17 +1,25 @@
 import logging
 import json
 import asyncio
+import platform
+
 from datetime import datetime, date
 from typing import Dict, List, Union, Tuple, Type
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
-from data_services.loaders.eodhd import Eodhd, EodQueryOhlcv
-from data_services.loaders.tiingo import Tiingo, TiingoQueryIntraday
+from data_services.loaders.eodhd import Eodhd
+from data_services.loaders.tiingo import Tiingo
 from data_services.utils.universe import Universe
 
 from data_services.utils.log_utils import logging_dict
 from data_services.utils.fetch_utils import file_dump
+from data_services.loaders.base import Api, DataQuery
+
+# Work around solution to avoid RuntimeError from event loop policy
+# that can appear for windows systems when working with asyncio
+if platform.system() == "Windows":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # Output locations
 OUTPUT_BASE_DIR = Path(__file__).resolve().parents[2]
@@ -41,8 +49,7 @@ class Service:
     """Service base class to initialize the relevant api for data services"""
 
     eod: Eodhd = Eodhd()
-    tiingo: Tiingo = Tiingo()
-    # universe: QueryUniverse = field(default_factory=QueryUniverse)
+    # tiingo: Tiingo = Tiingo()
 
 
 # -------- Miscellaneous data ----------------------------------------------------------------------------
@@ -55,19 +62,19 @@ class MiscData(Service):
     def util_search(self, query: str) -> List[Dict]:
         return self.eod.search(search_query=query)
 
-    def get_supported_exchanges(self, api: str = "eod") -> List[Dict]:
+    def get_supported_exchanges(self, api: Api = Api.EOD) -> List[Dict]:
         """Get supported exchanges for a specific api data provider."""
-        if api == "eod":
-            json_response = self.eod.api_supported_exchanges()
+        if api == Api.EOD:
+            json_response = self.eod.supported_exchanges()
         with open(f"{OUTPUT_MISC_DATA}/supported_exchanges.json", "w") as file:
             json.dump(json_response, file, indent=4)
         return json_response
 
     def get_exchange_traded_tickers(
-        self, api: str = "eod", exchange_code: str = "US", delisted: bool = False
+        self, api: Api = Api.EOD, exchange_code: str = "US", delisted: bool = False
     ) -> List[Dict]:
         """Get traded tickers for a specific exchange and an api data provider."""
-        if api == "eod":
+        if api == Api.EOD:
             json_response = self.eod.exchange_traded_tickers(
                 exchange_code=exchange_code, delisted=delisted
             )
@@ -99,11 +106,11 @@ class Etf(Service):
         """
 
         _logger.info(f"Ohlcv retrieval for {universe.value} etfs...")
-        eodquery = EodQueryOhlcv(start=start, end=end, tickers=universe.components)
-        ohlcv_data = await self.eod.ohlcv(eodquery=eodquery)
+        query = DataQuery(start=start, end=end, tickers=universe.components)
+        ohlcv_data = await self.eod.ohlcv(ohlcv_query=query)
         filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.value}.h5"
         _logger.info(f"Retrieval done for {universe.value} etfs! ")
-        return filepath_universe, eodquery.tickers, ohlcv_data
+        return filepath_universe, query.tickers, ohlcv_data
 
     def load_etf_universe(
         self,
@@ -134,31 +141,31 @@ class Etf(Service):
                         start=start, end=end, universe=Universe.US_EQ_SECTOR
                     )
                 ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.US_EQ_INDEX
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.EQ_EM_COUNTRY
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.US_FI_ETF
-                    )
-                ),
-                asyncio.create_task(
-                    self._load_etf_universe_async(
-                        start=start, end=end, universe=Universe.COMMO_ETF
-                    )
-                ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.US_EQ_INDEX
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.EQ_DEV_COUNTRY
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.EQ_EM_COUNTRY
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.US_FI_ETF
+                #     )
+                # ),
+                # asyncio.create_task(
+                #     self._load_etf_universe_async(
+                #         start=start, end=end, universe=Universe.COMMO_ETF
+                #     )
+                # ),
             ]
 
             return await asyncio.gather(*tasks)
@@ -182,3 +189,8 @@ class Futures(Service):
 # -------- MACRO -----------------------------------------------------------------------------------------
 class Macro(Service):
     pass
+
+
+if __name__ == "__main__":
+    etfdata = Etf()
+    etfdata.load_all_etf(start=date(2023, 1, 1), end=date(2023, 5, 31))
