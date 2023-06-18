@@ -1,36 +1,50 @@
 import logging
-
+import os
+from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Union, List
+from datetime import datetime, date
+from enum import Enum, auto
+from dotenv import load_dotenv
 
 from data_services.utils.log_utils import logging_dict
-from data_services.utils.mykeys import get_api_keys
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
+# load env secret keys
+load_dotenv()
+
+
+class Api(Enum):
+    EOD = auto()
+    TIINGO = auto()
+
+
+@dataclass
+class DataQuery:
+    """
+    Build and returns a query datamodel for any api requests.
+    Currently, queries for multiple tickers is possible only for same exchange
+    """
+
+    exchange: str = "US"
+    start: Union[datetime, date] = None
+    end: Union[datetime, date] = None
+    tickers: List[str] = field(default_factory=List)
+
 
 class BaseLoader(ABC):
     """BaseLoader class model that allows to implement api providers classes"""
 
-    def __init__(self) -> None:
-        api_keys = get_api_keys()
-        try:
-            if isinstance(api_keys, Dict):
-                self.api_key = api_keys[self.API_KEY_NAME]
-                _logger.info(f"Api key loaded from env...Done: {self.API_KEY_NAME}")
-            else:
-                self.api_key = api_keys[self.API_KEYS_SECTION_NAME][self.API_KEY_NAME]
-                _logger.info(
-                    f"Api key loaded from .ini file...Done: {self.API_KEY_NAME}"
-                )
-        except KeyError as e:
-            _logger.exception(f"API_KEYS_SECTION_NAME or API_KEY_NAME error -- {e}")
-            raise
+    def __init__(self):
+        # Load api key
+        self.api_key = os.environ.get(self.API.name.lower())
+        _logger.info(f"Api key for {self.API} is loaded")
 
     @abstractmethod
-    def api_supported_exchanges(self):
+    def supported_exchanges(self):
         pass
 
     @abstractmethod
