@@ -22,7 +22,7 @@ class InvalidEodKeyError(EodhdError):
 
 
 class Eodhd(BaseLoader):
-    API = Api.EOD
+    API = Api.EODHISTORICALDATA
     ROOT_URL = "https://eodhistoricaldata.com/api"
 
     def __init__(self) -> None:

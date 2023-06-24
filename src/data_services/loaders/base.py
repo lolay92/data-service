@@ -19,7 +19,7 @@ load_dotenv()
 
 
 class Api(Enum):
-    EOD = auto()
+    EODHISTORICALDATA = auto()
     TIINGO = auto()
 
 
