@@ -1,4 +1,3 @@
-import platform
 import requests
 import asyncio
 import aiohttp
@@ -30,9 +29,9 @@ class Eodhd(BaseLoader):
         super().__init__()
         try:
             if self.api_key is None:
-                raise InvalidEodKeyError(f"api_key cannot be None type!")
+                raise InvalidEodKeyError(f"{Eodhd.API.name} api_key cannot be None!")
             self.params = {
-                "api_token": "demo",
+                "api_token": self.api_key,
                 "fmt": "json",
             }
         except InvalidEodKeyError as e:
