@@ -18,10 +18,22 @@ pytest = "^7.3.1"
 python-dotenv = "^1.0.0"
 pytest-asyncio = "^0.21.0"
 pytest-cov = "^4.1.0"
+flake8 = "^6.0.0"
+mypy = "^1.4.0"
+pandas-stubs = "^2.0.2.230605"
+types-requests = "^2.31.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
+
+[tool.black]
+line-length = 125
+
+[tool.pytest.ini_options]
+testpaths= [
+        "tests", 
+        ]
 
 [build-system]
 requires = ["poetry-core"]

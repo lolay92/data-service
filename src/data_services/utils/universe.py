@@ -77,14 +77,17 @@ PL1: Platinum futures contract traded on the Tocom.
 PA1: Palladium futures contract traded on the Tocom.
 
 Energy futures
-CL1: Crude oil futures contract traded on the New York Mercantile Exchange (NYMEX).
+CL1: Crude oil futures contract traded on the New York Mercantile
+Exchange (NYMEX).
 NG1: Natural gas futures contract traded on the NYMEX.
 HO1: Heating oil futures contract traded on the NYMEX.
-BZ1: Brent crude oil futures contract traded on the Intercontinental Exchange (ICE).
+BZ1: Brent crude oil futures contract traded on the Intercontinental
+Exchange (ICE).
 RB1: RBOB gasoline futures contract traded on the NYMEX.
 
 US EQ IDX FUTURES
-ES1: E-mini S&P 500 futures contract traded on the Chicago Mercantile Exchange (CME).
+ES1: E-mini S&P 500 futures contract traded on the Chicago Mercantile
+Exchange (CME).
 YM1: E-mini Dow Jones Industrial Average futures contract traded on the CME.
 NQ1: E-mini Nasdaq 100 futures contract traded on the CME.
 RTY1: E-mini Russell 2000 futures contract traded on the CME.
@@ -109,7 +112,11 @@ class Universe(Enum):
         "ETF",
         "FXI.KWEB.EWZ.EWW.EWS.EWY.EWT.INDA.EWH.EZA",
     )
-    US_FI_ETF = ("us_fi_etf", "ETF", "BIL.SHY.IEI.IEF.TLT.MBB.LQD.HYG.JNK.PCY.BOND")
+    US_FI_ETF = (
+        "us_fi_etf",
+        "ETF",
+        "BIL.SHY.IEI.IEF.TLT.MBB.LQD.HYG.JNK.PCY.BOND",
+    )
     COMMO_ETF = ("commo_etf", "ETF", "GLD.SLV.USO.UNG.DBA.DBC")
     US_EQ_IDX_FUT = ("us_eq_idx_fut", "FUT", "ES1.YM1.NQ1.RTY1")
     FI_FUT = ("fi_fut", "FUT", "ZT1.ZF1.ZN1.ZB1")
@@ -120,10 +127,3 @@ class Universe(Enum):
         "FX",
         "EURUSD.USDJPY.GBPUSD.AUDUSD.USDCAD.USDCHF.NZDUSD.USDMXN",
     )
-
-    def __new__(cls, value, category, components):
-        obj = object.__new__(cls)
-        obj._value_ = value
-        obj.category = category
-        obj.components = components.split(".")
-        return obj

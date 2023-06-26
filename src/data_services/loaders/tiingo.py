@@ -1,12 +1,5 @@
-import platform
-import requests
-import asyncio
-import aiohttp
 import logging
-
-from typing import List, Dict
-
-from data_services.loaders.base import BaseLoader, Api, DataQuery
+from data_services.loaders.base import BaseLoader, Api
 from data_services.utils.log_utils import logging_dict
 
 # Initialize logger
@@ -42,5 +35,5 @@ class Tiingo(BaseLoader):
     def supported_exchanges(self):
         pass
 
-    def exchange_traded_tickers(self):
+    def exchange_traded_tickers(self, exchange_code: str, delisted: bool = False):
         pass

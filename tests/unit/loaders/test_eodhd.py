@@ -19,9 +19,7 @@ def test_eodhd_init(dummy_eodhd):
 
 @mock.patch.dict("src.data_services.loaders.base.os.environ", {}, clear=True)
 def test_eodhd_invalidkeyerror():
-    with pytest.raises(
-        InvalidEodKeyError, match="EODHISTORICALDATA api_key cannot be None!"
-    ):
+    with pytest.raises(InvalidEodKeyError, match="EODHISTORICALDATA api_key cannot be None!"):
         Eodhd()
 
 
@@ -44,7 +42,6 @@ def test_search(
 ):
     mock_response.json.return_value = json_response_value
     mock_request_get.return_value = mock_response
-    search_query = search_query
     assert dummy_eodhd.search(search_query, limit) == json_response_value
     url = f"{dummy_eodhd.ROOT_URL}/search/{search_query}"
     mock_request_get.assert_called_with(url=url, params=dummy_eodhd.params)
@@ -64,8 +61,3 @@ def test_exchange_traded_tickers(mock_request_get, mock_response, dummy_eodhd):
 
 def test_ohlcv():
     pass
-
-
-# use dataquery fixture
-# Mock _fetch_json async function ==> return json value
-# Mock aiohttp.ClientSession.get ==>

@@ -16,7 +16,8 @@ logging_dict = {
     "formatters": {
         "minimal": {"format": "[%(levelname)s] %(message)s"},
         "detailed": {
-            "format": "[%(levelname)s] %(asctime)s:%(filename)s:%(funcName)s:\nline %(lineno)d:%(message)s"
+            "format": "[%(levelname)s] %(asctime)s:%(filename)s:%(funcName)s:\
+            \nline %(lineno)d:%(message)s"
         },
     },
     # HANDLERS
@@ -53,7 +54,7 @@ def log_exception(logger):
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except Exception as e:
+            except Exception:
                 logger.error(traceback.format_exc())
                 raise
 

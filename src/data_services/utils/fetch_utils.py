@@ -11,7 +11,7 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def remove_duplicates(existing_df: pd.DataFrame, new_df: pd.DataFrame) -> pd.DataFrame:
+def remove_duplicates(existing_df: pd.DataFrame, new_df: pd.DataFrame) -> None | pd.DataFrame:
     """Remove duplicated data"""
     duplicates = existing_df.index.intersection(new_df.index)
     if duplicates.empty:
@@ -35,7 +35,8 @@ def file_dump(func):
                 if f"/{ticker}" in store.keys():
                     remove_duplicates(store[ticker], df)
                     del existing_df
-                # Append new data to existing ticker or create new table for a new ticker
+                # Append new data to existing ticker or create new table
+                # for a new ticker
                 store.append(ticker, df)
 
         return data

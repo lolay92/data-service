@@ -1,5 +1,5 @@
-import pytest
 from datetime import date
+import pytest
 from src.data_services.loaders.eodhd import Eodhd
 from src.data_services.loaders.base import DataQuery
 

@@ -21,6 +21,7 @@ load_dotenv()
 class Api(Enum):
     EODHISTORICALDATA = auto()
     TIINGO = auto()
+    FRED = auto()
 
 
 @dataclass
@@ -30,9 +31,9 @@ class DataQuery:
     Currently, queries for multiple tickers is possible only for same exchange
     """
 
+    start: Union[datetime, date]
+    end: Union[datetime, date]
     exchange: str = "US"
-    start: Union[datetime, date] = None
-    end: Union[datetime, date] = None
     tickers: List[str] = field(default_factory=List)
 
 
@@ -49,5 +50,5 @@ class BaseLoader(ABC):
         pass
 
     @abstractmethod
-    def exchange_traded_tickers(self):
+    def exchange_traded_tickers(self, exchange_code: str, delisted: bool = False):
         pass

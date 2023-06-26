@@ -34,8 +34,8 @@ class Eodhd(BaseLoader):
                 "api_token": self.api_key,
                 "fmt": "json",
             }
-        except InvalidEodKeyError as e:
-            _logger.exception(e)
+        except InvalidEodKeyError as err:
+            _logger.exception(err)
             raise
 
     def supported_exchanges(self) -> List[Dict]:
@@ -47,9 +47,7 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response.json()
 
-    def exchange_traded_tickers(
-        self, exchange_code: str, delisted: bool = False
-    ) -> List[Dict]:
+    def exchange_traded_tickers(self, exchange_code: str, delisted: bool = False) -> List[Dict]:
         """
         Get traded tickers from api
         """
@@ -92,15 +90,10 @@ class Eodhd(BaseLoader):
 
         # Asynchronous requests
         async with aiohttp.ClientSession() as aiohttp_session:
-            urls = [
-                f"{Eodhd.ROOT_URL}/eod/{ticker}.{ohlcv_query.exchange}"
-                for ticker in ohlcv_query.tickers
-            ]
+            urls = [f"{Eodhd.ROOT_URL}/eod/{ticker}.{ohlcv_query.exchange}" for ticker in ohlcv_query.tickers]
 
             tasks = [aiohttp_session.get(url, params=self.params) for url in urls]
 
             responses = await asyncio.gather(*tasks)
-            responses_json = await asyncio.gather(
-                *[_fetch_json(response) for response in responses]
-            )
+            responses_json = await asyncio.gather(*[_fetch_json(response) for response in responses])
         return responses_json
