@@ -1,11 +1,10 @@
 **/__pycache__/
 **/.pytest_cache
 **/.DS_Store
+*.txt
+*.ipynb
 .env
 .venv/
 .vscode/
 output/
 logs/
-Spec.txt
-sandbox.ipynb
-todo.txt
