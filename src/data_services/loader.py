@@ -34,9 +34,6 @@ OUTPUT_CRYPTO_INTRADAY.mkdir(parents=True, exist_ok=True)
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
-# define types
-# UniverseType = Type[Universe]
-
 
 @dataclass(frozen=True)
 class Service:
@@ -54,7 +51,6 @@ class MiscData(Service):
         super().__init__()
 
     def util_search(self, query: str) -> List[Dict]:
-        """bla bla"""
         return self.eod.search(search_query=query)
 
     def get_supported_exchanges(self, api: Api = Api.EODHISTORICALDATA) -> List[Dict]:
