@@ -3,7 +3,7 @@ import asyncio
 import aiohttp
 import logging
 
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from data_services.loaders.base import BaseLoader, Api, DataQuery
 from data_services.utils.log_utils import logging_dict
@@ -47,7 +47,7 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response.json()
 
-    def exchange_traded_tickers(self, exchange_code: str, delisted: bool = False) -> List[Dict]:
+    def exchange_traded_tickers(self, exchange_code: str, delisted: Optional[bool] = False) -> List[Dict]:
         """
         Get traded tickers from api
         """

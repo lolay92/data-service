@@ -3,7 +3,7 @@ import logging.config
 import os
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Union, List
+from typing import Union, List, Optional
 from datetime import datetime, date
 from enum import Enum, auto
 from dotenv import load_dotenv
@@ -50,5 +50,5 @@ class BaseLoader(ABC):
         pass
 
     @abstractmethod
-    def exchange_traded_tickers(self, exchange_code: str, delisted: bool = False):
+    def exchange_traded_tickers(self, exchange_code: str, delisted: Optional[bool]):
         pass
