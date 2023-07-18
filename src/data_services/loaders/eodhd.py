@@ -68,6 +68,11 @@ class Eodhd(BaseLoader):
             response = requests_session.get(url=url, params=self.params)
         return response.json()
 
+    # Get json data asynchronously
+    async def _fetch_json(self, session, url):
+        async with session.get(url, params=self.params) as response:
+            return await response.json()
+
     async def ohlcv(
         self,
         ohlcv_query: DataQuery,
@@ -82,18 +87,9 @@ class Eodhd(BaseLoader):
                 "to": ohlcv_query.end.strftime("%Y-%m-%d"),
             }
         )
-
-        # Get json data asynchronously
-        async def _fetch_json(response):
-            json_response = await response.json()
-            return json_response
-
         # Asynchronous requests
         async with aiohttp.ClientSession() as aiohttp_session:
             urls = [f"{Eodhd.ROOT_URL}/eod/{ticker}.{ohlcv_query.exchange}" for ticker in ohlcv_query.tickers]
-
-            tasks = [aiohttp_session.get(url, params=self.params) for url in urls]
-
-            responses = await asyncio.gather(*tasks)
-            responses_json = await asyncio.gather(*[_fetch_json(response) for response in responses])
-        return responses_json
+            tasks = [asyncio.create_task(self._fetch_json(aiohttp_session, url)) for url in urls]
+            json_responses = await asyncio.gather(*tasks)
+        return json_responses

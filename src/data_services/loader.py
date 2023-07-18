@@ -100,11 +100,11 @@ class Etf(Service):
         configuration file.
         """
 
-        _logger.info(f"Ohlcv retrieval for {universe.value} etfs...")
+        _logger.info(f"Ohlcv retrieval for {universe.value[0]} etfs...")
         query = DataQuery(start=start, end=end, tickers=universe.value[2].split("."))
         ohlcv_data = await self.eod.ohlcv(ohlcv_query=query)
-        filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.value}.h5"
-        _logger.info(f"Retrieval done for {universe.value} etfs! ")
+        filepath_universe = f"{OUTPUT_ETF_OHLCV}/{universe.value[0]}.h5"
+        _logger.info(f"Retrieval done for {universe.value[0]} etfs! ")
         return filepath_universe, query.tickers, ohlcv_data
 
     def load_etf_universe(
@@ -129,12 +129,24 @@ class Etf(Service):
             """Create asynchronous tasks for global ETF universe retrieval."""
 
             tasks = [
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.US_EQ_SECTOR)),
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.US_EQ_INDEX)),
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.EQ_DEV_COUNTRY)),
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.EQ_EM_COUNTRY)),
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.US_FI_ETF)),
-                asyncio.create_task(self._load_etf_universe_async(start=start, end=end, universe=Universe.COMMO_ETF)),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.US_EQ_SECTOR)
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.US_EQ_INDEX)
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.EQ_DEV_COUNTRY)
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.EQ_EM_COUNTRY)
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.US_FI_ETF)
+                ),
+                asyncio.create_task(
+                    self._load_etf_universe_async(start=start, end=end, universe=Universe.COMMO_ETF)
+                ),
             ]
 
             return await asyncio.gather(*tasks)
@@ -153,3 +165,8 @@ class Crypto(Service):
 # -------- MACRO --------------------------------------------------------
 class Macro(Service):
     pass
+
+
+if __name__ == "__main__":
+    etf = Etf()
+    etf_data = etf.load_all_etf(start=date(2023, 1, 1), end=date(2023, 1, 30))

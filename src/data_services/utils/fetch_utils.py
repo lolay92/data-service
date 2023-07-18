@@ -34,9 +34,6 @@ def file_dump(func):
                 # Handle duplicates for existing ticker
                 if f"/{ticker}" in store.keys():
                     remove_duplicates(store[ticker], df)
-                    del existing_df
-                # Append new data to existing ticker or create new table
-                # for a new ticker
                 store.append(ticker, df)
 
         return data
