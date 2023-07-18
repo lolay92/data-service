@@ -12,6 +12,7 @@
 
 # Units tests Coverage reports
 htmlcov/ 
+.coverage
 
 # Text files 
 *.txt
