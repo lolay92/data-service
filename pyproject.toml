@@ -22,13 +22,14 @@ flake8 = "^6.0.0"
 mypy = "^1.4.0"
 pandas-stubs = "^2.0.2.230605"
 types-requests = "^2.31.0.1"
+pytest-dependency = "^0.5.1"
 
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 
 [tool.black]
-line-length = 125
+line-length = 110
 
 [tool.pytest.ini_options]
 testpaths= [

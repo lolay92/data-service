@@ -15,10 +15,11 @@ contourpy==1.0.7
 coverage==7.2.7
 cycler==0.11.0
 Cython==0.29.34
--e git+https://github.com/lolay92/data-service.git@aa3b7644b1b35fc558faf67a4ae873763122e9c9#egg=data_services
+-e git+https://github.com/lolay92/data-service.git@60d744112201a6b683939c0f1800793fa8aad569#egg=data_services
 debugpy==1.6.7
 decorator==5.1.1
 executing==1.2.0
+flake8==6.0.0
 fonttools==4.39.3
 frozenlist==1.3.3
 idna==3.4
@@ -31,14 +32,17 @@ jupyter_core==5.3.0
 kiwisolver==1.4.4
 matplotlib==3.7.1
 matplotlib-inline==0.1.6
+mccabe==0.7.0
 msgpack==1.0.5
 multidict==6.0.4
+mypy==1.4.0
 mypy-extensions==1.0.0
 nest-asyncio==1.5.6
 numexpr==2.8.4
-numpy==1.24.2
+numpy==1.25.0
 packaging==23.0
 pandas==2.0.0
+pandas-stubs==2.0.2.230605
 parso==0.8.3
 pathspec==0.11.1
 pexpect==4.8.0
@@ -51,11 +55,14 @@ psutil==5.9.4
 ptyprocess==0.7.0
 pure-eval==0.2.2
 py-cpuinfo==9.0.0
+pycodestyle==2.10.0
+pyflakes==3.0.1
 Pygments==2.14.0
 pyparsing==3.0.9
 pytest==7.3.1
 pytest-asyncio==0.21.0
 pytest-cov==4.1.0
+pytest-dependency==0.5.1
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2023.3
@@ -66,6 +73,10 @@ stack-data==0.6.2
 tables==3.8.0
 tornado==6.2
 traitlets==5.9.0
+types-pytz==2023.3.0.0
+types-requests==2.31.0.1
+types-urllib3==1.26.25.13
+typing_extensions==4.5.0
 tzdata==2023.3
 urllib3==1.26.15
 wcwidth==0.2.6
