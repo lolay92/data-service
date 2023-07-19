@@ -10,8 +10,8 @@ on:
         - main
 
 env:
-    IMAGE: basmatinet
-    TAG: v1.2.0
+    IMAGE: 
+    TAG: 
 
 
 jobs:
