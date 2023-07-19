@@ -1,0 +1,21 @@
+name: Data-service CI pipeline
+
+on:
+    push:
+        branches:
+        - main
+
+    pull_request:
+        branches:
+        - main
+
+env:
+    IMAGE: 
+    TAG: 
+
+
+jobs:
+    setup-build-publish-deploy:
+        name: setup, build, publish, and deploy
+        runs-on: ubuntu-latest
+        environment: production
