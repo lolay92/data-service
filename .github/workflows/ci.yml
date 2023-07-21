@@ -43,6 +43,7 @@ jobs:
             - name: Install dependencies
               run: |
                 poetry install --with=dev --no-interaction --no-root
+                source $VENV
             
             - name: code quality
               run: |
