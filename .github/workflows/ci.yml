@@ -45,7 +45,10 @@ jobs:
                 poetry install --with=dev --no-interaction --no-root
             
             - name: code quality
-              run: pwd
+              run: |
+                pwd
+                which python
+                ls -la
 
             #----------------------------------------------
             #       run tests 
