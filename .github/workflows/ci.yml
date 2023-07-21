@@ -38,15 +38,12 @@ jobs:
                 installer-parallel: true
 
             #----------------------------------------------
-            #       source venv an install dependencies 
+            #       install dependencies & code quality 
             #----------------------------------------------
             - name: Install dependencies
               run: |
                 poetry install --with=dev --no-interaction --no-root
             
-            #----------------------------------------------
-            #        code quality testing 
-            #----------------------------------------------  
             - name: code quality
               run: make lint && make format
 
