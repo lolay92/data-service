@@ -42,7 +42,6 @@ jobs:
             #----------------------------------------------
             - name: Install dependencies
               run: |
-                source $VENV
                 poetry install --with=dev --no-interaction --no-root
             
             #----------------------------------------------
