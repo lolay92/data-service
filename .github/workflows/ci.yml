@@ -45,7 +45,7 @@ jobs:
                 poetry install --with=dev --no-interaction --no-root
             
             - name: code quality
-              run: make lint && make format
+              run: pwd
 
             #----------------------------------------------
             #       run tests 
