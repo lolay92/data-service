@@ -1,4 +1,4 @@
-name: Data-service automated pipeline for testing
+name: ci pipeline
 
 on:
     push:
