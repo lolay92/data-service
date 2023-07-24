@@ -11,9 +11,9 @@ format:
 test: 
 	@echo "Running a battery of tests..."
 	@echo "Unit tests..."
-	pytest -s -q --disable-pytest-warnings tests/unit/test_eodhd.py
-	pytest -s -q --disable-pytest-warnings tests/unit/test_loader.py
-	pytest -s -q --disable-pytest-warnings tests/unit/test_fetch_utils.py
+	pytest -s -q --disable-pytest-warnings ./tests/unit/test_eodhd.py
+	pytest -s -q --disable-pytest-warnings ./tests/unit/test_loader.py
+	pytest -s -q --disable-pytest-warnings ./tests/unit/test_fetch_utils.py
 	@echo "Tests carried out successfully!"
 
 all: lint format test
