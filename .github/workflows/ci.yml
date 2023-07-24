@@ -42,17 +42,15 @@ jobs:
             #----------------------------------------------
             - name: Install dependencies
               run: |
+                source ./venv.bin activate
                 poetry install --with=dev --no-interaction --no-root
-                python -m pip install pytest
-                python -m pip install pytest-asyncio
-                
-            
-            - name: code quality
-              run: |
-                pwd
                 which python
-                ls -la
-
+                pwd
+                ll -lrta
+    
+            - name: code quality
+              run: make lint && make format
+        
             #----------------------------------------------
             #       run tests 
             #----------------------------------------------
