@@ -43,7 +43,9 @@ jobs:
             - name: Install dependencies
               run: |
                 poetry install --with=dev --no-interaction --no-root
-                source $VENV
+                python -m pip install pytest
+                python -m pip install pytest-asyncio
+                
             
             - name: code quality
               run: |
