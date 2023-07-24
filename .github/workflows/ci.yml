@@ -56,4 +56,5 @@ jobs:
             #----------------------------------------------
             - name: unit tests
               run: make test
+              shell: bash
 
