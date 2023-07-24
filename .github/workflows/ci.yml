@@ -43,10 +43,7 @@ jobs:
             - name: Install dependencies
               run: |
                 poetry install --with=dev --no-interaction --no-root
-                source ./.venv/bin/activate
-                which python
-                pwd
-                ll -lrta
+                source .venv/bin/activate
     
             - name: code quality
               run: make lint && make format
