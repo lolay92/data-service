@@ -46,6 +46,11 @@ jobs:
                 source ./.venv/bin/activate
                 poetry add pytest
     
+            - name: Debug pytest
+              run: |
+                which pytest
+                pytest --version
+    
             - name: code quality
               run: |
                 pytest -s -q --disable-pytest-warnings tests/unit/test_eodhd.py
