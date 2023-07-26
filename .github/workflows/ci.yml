@@ -44,10 +44,13 @@ jobs:
               run: |
                 poetry install --with=dev --no-interaction --no-root
                 source ./.venv/bin/activate
+                poetry add pytest
     
             - name: code quality
-              run: make lint && make format
-        
+              run: |
+                pytest -s -q --disable-pytest-warnings tests/unit/test_eodhd.py
+                make lint && make format
+                
             #----------------------------------------------
             #       run tests 
             #----------------------------------------------
