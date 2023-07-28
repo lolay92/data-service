@@ -42,24 +42,24 @@ jobs:
             #----------------------------------------------
             - name: Install dependencies
               run: |
-                pwd
                 poetry install --with=dev --no-interaction --no-root
-                ls .venv/bin
                 source .venv/bin/activate
+              shell: bash
     
             - name: Debug pytest
               run: |
                 which pytest
                 pytest --version
+              shell: bash
     
             - name: code quality
-              run: |
-                pytest -s -q --disable-pytest-warnings tests/unit/test_eodhd.py
-                make lint && make format
+              run: make lint && make format
+              shell: bash
                 
             #----------------------------------------------
             #       run tests 
             #----------------------------------------------
             - name: unit tests
               run: make test
+              shell: bash
 
