@@ -42,9 +42,9 @@ jobs:
             #----------------------------------------------
             - name: Install dependencies
               run: |
+                pwd
                 poetry install --with=dev --no-interaction --no-root
-                source ./.venv/bin/activate
-                poetry add pytest
+                source .venv/bin/activate
     
             - name: Debug pytest
               run: |
@@ -61,5 +61,4 @@ jobs:
             #----------------------------------------------
             - name: unit tests
               run: make test
-              shell: bash
 
