@@ -8,7 +8,7 @@ from datetime import datetime, date
 from enum import Enum, auto
 from dotenv import load_dotenv
 
-from data_services.utils.log_utils import logging_dict
+from src.data_services.utils.log_utils import logging_dict
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)
