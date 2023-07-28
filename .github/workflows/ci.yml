@@ -43,8 +43,8 @@ jobs:
             - name: Install dependencies
               run: |
                 pwd
-                ls
                 poetry install --with=dev --no-interaction --no-root
+                ls .venv/bin
                 source .venv/bin/activate
     
             - name: Debug pytest
