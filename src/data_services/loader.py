@@ -7,12 +7,12 @@ from typing import Dict, List, Union, Tuple
 from dataclasses import dataclass
 from pathlib import Path
 
-from data_services.loaders.eodhd import Eodhd
-from data_services.utils.universe import Universe
+from src.data_services.loaders.eodhd import Eodhd
+from src.data_services.utils.universe import Universe
 
-from data_services.utils.log_utils import logging_dict
-from data_services.utils.fetch_utils import file_dump
-from data_services.loaders.base import Api, DataQuery
+from src.data_services.utils.log_utils import logging_dict
+from src.data_services.utils.fetch_utils import file_dump
+from src.data_services.loaders.base import Api, DataQuery
 
 
 # Output locations
