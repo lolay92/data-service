@@ -43,6 +43,7 @@ jobs:
             - name: Install dependencies
               run: |
                 pwd
+                ls .venv
                 poetry install --with=dev --no-interaction --no-root
                 source .venv/bin/activate
     
