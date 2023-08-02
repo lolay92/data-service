@@ -70,7 +70,7 @@ jobs:
                 source .venv/bin/activate
                 pytest -s -q --disable-pytest-warnings -k "test_eodhd_init"
                 pytest -s -q --disable-pytest-warnings -k "test_eodhd_invalidkeyerror"  
-                pytest -s -q --disable-pytest-warnings -k "test_eodhd_search"
+                pytest -s -q --disable-pytest-warnings -k "test_search"
                 pytest -s -q --disable-pytest-warnings -k "test_exchange_traded_tickers"
                 pytest -s -q --disable-pytest-warnings -k "test_ohlcv"
               shell: bash
