@@ -15,7 +15,9 @@ jobs:
                 os: [macos-latest]
                 python-version: ['3.10', '3.11']
         runs-on: ${{ matrix.os }}
-        
+        env:
+            EODHISTORICALDATA: ${{ secrets.EODHISTORICALDATA }}
+            
         steps:
             #----------------------------------------------
             #       check-out repo and set-up python
