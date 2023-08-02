@@ -67,6 +67,7 @@ jobs:
             #----------------------------------------------
             - name: unit tests
               run: |
+                source .venv/bin/activate
                 python -c "from dotenv import load_dotenv; load_dotenv()"
                 python -c "import os; print(os.environ.get('EODHISTORICALDATA')"
               shell: bash
