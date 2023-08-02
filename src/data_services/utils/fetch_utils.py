@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Union
 from functools import wraps
 
 
@@ -11,7 +12,7 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def remove_duplicates(existing_df: pd.DataFrame, new_df: pd.DataFrame) -> None | pd.DataFrame:
+def remove_duplicates(existing_df: pd.DataFrame, new_df: pd.DataFrame) -> Union[None, pd.DataFrame]:
     """Remove duplicated data"""
     duplicates = existing_df.index.intersection(new_df.index)
     if duplicates.empty:
