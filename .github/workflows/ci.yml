@@ -1,4 +1,4 @@
-name: ci pipeline
+name: test
 
 on:
     push:
@@ -15,7 +15,9 @@ jobs:
                 os: [macos-latest]
                 python-version: ['3.10', '3.11']
         runs-on: ${{ matrix.os }}
-        
+        env:
+            EODHISTORICALDATA: ${{ secrets.EODHISTORICALDATA }}
+            
         steps:
             #----------------------------------------------
             #       check-out repo and set-up python
@@ -41,19 +43,28 @@ jobs:
             #       install dependencies & code quality 
             #----------------------------------------------
             - name: Install dependencies
+              run: poetry install --with=dev --no-interaction --no-root
+          
+            #----------------------------------------------
+            #       Activate virtualenv
+            #----------------------------------------------
+            - name: virtualenv activation
               run: |
-                poetry install --with=dev --no-interaction --no-root
-                poetry show list
-            
-            - name: code quality
-              run: |
-                pwd
-                which python
-                ls -la
+                source .venv/bin/activate
+                echo PATH=$PATH >> $GITHUB_ENV
+              shell: bash
 
+            #----------------------------------------------
+            #       code quality
+            #----------------------------------------------
+            - name: code quality
+              run: make lint && make format
+              shell: bash
+                
             #----------------------------------------------
             #       run tests 
             #----------------------------------------------
             - name: unit tests
               run: make test
+              shell: bash
 

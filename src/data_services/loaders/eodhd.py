@@ -5,8 +5,8 @@ import logging
 
 from typing import List, Dict, Optional
 
-from data_services.loaders.base import BaseLoader, Api, DataQuery
-from data_services.utils.log_utils import logging_dict
+from src.data_services.loaders.base import BaseLoader, Api, DataQuery
+from src.data_services.utils.log_utils import logging_dict
 
 # Initialize logger
 logging.config.dictConfig(logging_dict)
