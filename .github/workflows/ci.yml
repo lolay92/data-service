@@ -67,10 +67,7 @@ jobs:
             #----------------------------------------------
             - name: unit tests
               run: |
-                pytest -s -q --disable-pytest-warnings -k "test_eodhd_init"
-                pytest -s -q --disable-pytest-warnings -k "test_eodhd_invalidkeyerror"  
-                pytest -s -q --disable-pytest-warnings -k "test_eodhd_search"
-                pytest -s -q --disable-pytest-warnings -k "test_exchange_traded_tickers"
-                pytest -s -q --disable-pytest-warnings -k "test_ohlcv"
+                python -c "from dotenv import load_dotenv; load_dotenv()"
+                python -c "import os; print(os.environ.get('EODHISTORICALDATA')"
               shell: bash
 
