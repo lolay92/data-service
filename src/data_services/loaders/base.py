@@ -42,7 +42,7 @@ class BaseLoader(ABC):
 
     def __init__(self):
         # Load api key
-        self.api_key = os.environ.get(self.API.name.lower())
+        self.api_key = os.environ.get(self.API.name)
         _logger.info(f"Api key for {self.API} is loaded")
 
     @abstractmethod
