@@ -7,11 +7,12 @@ This project provides an infrastructure for collecting financial market data fro
 - [x] Poetry for python packages and dependencies management
 - [x] Logging configuration
 - [x] System implementation for multiple API sources
-- [ ] Set up a manager for file storage/archivage
+- [x] Set up a manager for file storage/archivage
+- [x] Unitary tests with Pytest
+- [x] Makefile
+- [x] Workflow automation (CI/CD) with github actions
 - [ ] Containerize with Docker
-- [ ] Unitary tests with Pytest
-- [ ] Makefile
-- [ ] Workflow automation (CI/CD) with github actions
+- [ ] Set up a database to store data directly
 
 # Project Structure
 The project has the following directory structure:
@@ -43,13 +44,6 @@ The project has the following directory structure:
 `-- tests
     `-- __init__.py
 ```
-- **'output'** directory stores the output files
-- **'poetry.lock'** and **'pyproject.toml'** files contain project dependencies and configuration details
-- **'src'** directory contains the source code for the project
-- **'data_services'** module contains the loaders and main loader code
-- **'loaders'** sub-module contains different data loaders for different APIs
-- **'utils'** sub-module contains utility functions and constants
-- **'tests'** directory contains test code for the project
 
 <!-- # Installation procedure 
 To be completed soon...
