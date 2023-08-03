@@ -18,31 +18,36 @@ This project provides an infrastructure for collecting financial market data fro
 The project has the following directory structure:
 ```bash
 .
-|-- README.md
-|-- output
-|-- poetry.lock
-|-- pyproject.toml
-|-- src
-|   `-- data_services
-|       |-- __init__.py
-|       |-- loader.py
-|       |-- loaders
-|       |   |-- __init__.py
-|       |   |-- api.py
-|       |   |-- base.py
-|       |   |-- eodhd.py
-|       |   `-- tiingo.py
-|       `-- utils
-|           |-- __init__.py
-|           |-- constants
-|           |   |-- mykey.ini
-|           |   `-- universe.ini
-|           |-- fetch_utils.py
-|           |-- log_utils.py
-|           |-- mykey.py
-|           `-- universe.py
-`-- tests
-    `-- __init__.py
+.
+├── Makefile
+├── README.md
+├── poetry.lock
+├── pyproject.toml
+├── sandbox.ipynb
+├── setup.cfg
+├── src
+│   └── data_services
+│       ├── __init__.py
+│       ├── loader.py
+│       ├── loaders
+│       │   ├── __init__.py
+│       │   ├── base.py
+│       │   ├── eodhd.py
+│       │   └── tiingo.py
+│       └── utils
+│           ├── __init__.py
+│           ├── fetch_utils.py
+│           ├── log_utils.py
+│           └── universe.py
+└── tests
+    ├── __init__.py
+    ├── conftest.py
+    ├── pytest.ini
+    └── unit
+        ├── __init__.py
+        ├── test_eodhd.py
+        ├── test_fetch_utils.py
+        └── test_loader.py
 ```
 
 <!-- # Installation procedure 
