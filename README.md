@@ -23,7 +23,6 @@ The project has the following directory structure:
 ├── README.md
 ├── poetry.lock
 ├── pyproject.toml
-├── sandbox.ipynb
 ├── setup.cfg
 ├── src
 │   └── data_services
