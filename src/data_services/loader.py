@@ -156,17 +156,6 @@ class Etf(Service):
 
         return data
 
-
-# -------- CRYPTO -------------------------------------------------------
-class Crypto(Service):
-    pass
-
-
-# -------- MACRO --------------------------------------------------------
-class Macro(Service):
-    pass
-
-
 if __name__ == "__main__":
     etf = Etf()
     etf_data = etf.load_all_etf(start=date(2023, 1, 1), end=date(2023, 1, 30))
