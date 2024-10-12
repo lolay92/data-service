@@ -1,5 +1,3 @@
-from enum import Enum
-
 """
 Fixed-Income US ETFs
 BIL: Short-term US Treasury bills ETF
@@ -94,36 +92,48 @@ RTY1: E-mini Russell 2000 futures contract traded on the CME.
 
 """
 
+from enum import Enum
+import typing
+
 
 class Universe(Enum):
+    US_EQ_INDEX = ("us_eq_index", "ETF", ["SPY", "QQQ", "DIOOOO", "IWMAHAHAHAH"])
+    EQ_DEV_COUNTRY = ("eq_dev_country", "ETF", ["EWA", "EWC", "EWQ", "EWG", "EWI", "EWJ", "EWP", "EWU", "EUFN", "EWL"])
+    EQ_EM_COUNTRY = ("eq_em_country", "ETF", ["FXI", "KWEB", "EWZ", "EWW", "EWS", "EWY", "EWT", "INDA", "EWH", "EZA"])
+    US_FI_ETF = ("us_fi_etf", "ETF", ["BIL", "SHY", "IEI", "IEF", "TLT", "MBB", "LQD", "HYG", "JNK", "PCY", "BOND"])
+    COMMO_ETF = ("commo_etf", "ETF", ["GLD", "SLV", "USO", "UNG", "DBA", "DBC"])
     US_EQ_SECTOR = (
         "us_eq_sector",
         "ETF",
-        "XLY.XLP.XLE.XLF.XLV.XLI.XLB.XLK.XBI.SMH.XLC.XLU.XME.GDX.XOP.XHB.XLRE.XRT",
+        [
+            "XLY",
+            "XLP",
+            "XLE",
+            "XLF",
+            "XLV",
+            "XLI",
+            "XLB",
+            "XLK",
+            "XBI",
+            "SMH",
+            "XLC",
+            "XLU",
+            "XME",
+            "GDX",
+            "XOP",
+            "XHB",
+            "XLRE",
+            "XRT",
+        ],
     )
-    US_EQ_INDEX = ("us_eq_index", "ETF", "SPY.QQQ.DIA.IWM")
-    EQ_DEV_COUNTRY = (
-        "eq_dev_country",
-        "ETF",
-        "EWA.EWC.EWQ.EWG.EWI.EWJ.EWP.EWU.EUFN.EWL",
-    )
-    EQ_EM_COUNTRY = (
-        "eq_em_country",
-        "ETF",
-        "FXI.KWEB.EWZ.EWW.EWS.EWY.EWT.INDA.EWH.EZA",
-    )
-    US_FI_ETF = (
-        "us_fi_etf",
-        "ETF",
-        "BIL.SHY.IEI.IEF.TLT.MBB.LQD.HYG.JNK.PCY.BOND",
-    )
-    COMMO_ETF = ("commo_etf", "ETF", "GLD.SLV.USO.UNG.DBA.DBC")
-    US_EQ_IDX_FUT = ("us_eq_idx_fut", "FUT", "ES1.YM1.NQ1.RTY1")
-    FI_FUT = ("fi_fut", "FUT", "ZT1.ZF1.ZN1.ZB1")
-    PM_FUT = ("pm_fut", "FUT", "GC1.SI1.PL1.PA1")
-    ENERGY_FUT = ("energy_fut", "FUT", "CL1.NG1.HO1.BZ1.RB1")
-    FX_MAJOR_PAIRS = (
-        "fx_major_pairs",
-        "FX",
-        "EURUSD.USDJPY.GBPUSD.AUDUSD.USDCAD.USDCHF.NZDUSD.USDMXN",
-    )
+
+    FX_MAJOR_PAIRS = ("fx_major_pairs", "FX", ["EURUSD", "USDJPY", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD", "USDMXN"])
+    US_EQ_IDX_FUT = ("us_eq_idx_fut", "FUT", ["ES1", "YM1", "NQ1", "RTY1"])
+    FI_FUT = ("fi_fut", "FUT", ["ZT1", "ZF1", "ZN1", "ZB1"])
+    PM_FUT = ("pm_fut", "FUT", ["GC1", "SI1", "PL1", "PA1"])
+    ENERGY_FUT = ("energy_fut", "FUT", ["CL1", "NG1", "HO1", "BZ1", "RB1"])
+
+    @staticmethod
+    def build_custom_universe(universe_name: str, custom_universe: typing.List = None):
+        Universe = (universe_name, custom_universe)
+        return Universe
