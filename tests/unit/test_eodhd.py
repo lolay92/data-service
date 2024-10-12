@@ -1,7 +1,7 @@
 import pytest
-from src.data_services.loaders.eodhd import Eodhd
+from src.data_services.Services.eodhd import Eodhd
 from unittest import mock
-from src.data_services.loaders.eodhd import InvalidEodKeyError
+from src.data_services.Services.eodhd import InvalidEodKeyError
 
 
 def test_eodhd_init(mock_eodhd_init_params):

@@ -1,7 +1,7 @@
 from datetime import date
 import pytest
-from src.data_services.loaders.eodhd import Eodhd
-from src.data_services.loaders.base import DataQuery
+from src.data_services.Services.eodhd import Eodhd
+from data_services.utils.generic import DataQuery
 from src.data_services.loader import Etf
 from enum import Enum
 

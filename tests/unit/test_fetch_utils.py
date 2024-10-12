@@ -1,5 +1,5 @@
 # import pytest
-from src.data_services.utils.fetch_utils import file_dump, preprocess_df
+from src.data_services.utils.generic import file_saver, preprocess_df
 from pathlib import Path
 import asyncio
 import pandas as pd
@@ -51,7 +51,7 @@ def test_file_dump_decorator(tmp_path):
     ]
 
     # decorated function
-    @file_dump
+    @file_saver
     async def dummy_decorated_func(test_data):
         filepath = f"{str(tmp_path)}/file.h5"
         tickers = ["MCD", "AAPL"]
