@@ -54,5 +54,4 @@ class AsyncMarketDataHandler:
         if len(failed_symbols) > 0:
             _logger.warning(f"{len(failed_symbols)} failed symbols during fetching: {failed_symbols}")
 
-        breakpoint()
         return responses
