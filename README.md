@@ -22,18 +22,18 @@ market-data-service/
 
 ## Features
 
-- Multi-vendor support (currently EODHD and Tiingo)
+- Multi-vendor support (currently EODHD)
 - Asynchronous data fetching
 - OHLCV (Open, High, Low, Close, Volume) data retrieval
-- Intraday data support
+- Intraday data support (incoming)
 - Extensible architecture for easy addition of new data vendors
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/market-data-service.git
-   cd market-data-service
+   git clone https://github.com/your-username/data-service.git
+   cd data-service
    ```
 
 2. Install dependencies using Poetry:
@@ -67,7 +67,7 @@ from data_services.utils.universe import Universe
 from data_services._loader import getData
 
 # Define your universe
-universe = Universe.ETF
+universe = Universe.ETF 
 
 # Fetch OHLCV data
 data = getData(Eodhd, universe, start_date='2023-01-01', end_date='2023-12-31')
