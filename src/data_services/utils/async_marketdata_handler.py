@@ -12,6 +12,7 @@ from data_services.utils.data_process_utils import TimeSeriesDataQuery
 logging.config.dictConfig(logging_dict)
 _logger = logging.getLogger(__name__)
 
+
 class AsyncMarketDataHandler:
     def __init__(self) -> None:
         self.aio_session = None
@@ -24,34 +25,45 @@ class AsyncMarketDataHandler:
     async def __aexit__(self, exception_type, exception_value, traceback):
         await self.aio_session.close()
 
-    @retry(base_delay= 1, max_delay= 10, max_tries= 3)
-    async def _fetch_symbol_data_helper(self, symbol: str, url: str, 
-                                    params: typing.Dict) -> typing.Tuple[str, typing.List[typing.Dict]]:
+    @retry(base_delay=1, max_delay=10, max_tries=3)
+    async def _fetch_symbol_data_helper(
+        self, symbol: str, url: str, params: typing.Dict
+    ) -> typing.Tuple[str, typing.List[typing.Dict]]:
         """
         fetch symbol data asynchronously
 
-        """        
+        """
         async with self.aio_session.get(url=url, params=params) as response:
             await async_response_handler(response.status, response.headers, response.text)
             json_data = await response.json()
-            if not json_data: 
+            if not json_data:
                 _logger.warning(f"No data fetched for symbol: {symbol}")
                 return None
 
         return json_data
 
-    async def fetch_multi_symbols_data_helper(self, query: type[TimeSeriesDataQuery], params: typing.Dict, 
-                                            urls: typing.List[typing.Tuple[str, str]]) -> typing.List[typing.Dict]:
+    async def fetch_multi_symbols_data_helper(
+        self,
+        query: type[TimeSeriesDataQuery],
+        params: typing.Dict,
+        urls: typing.List[typing.Tuple[str, str]],
+    ) -> typing.List[typing.Dict]:
         """
         fetch multiple symbols data asynchronously
 
-        """        
+        """
         tasks = [self._fetch_symbol_data_helper(symbol, url, params) for symbol, url in urls]
         responses = await asyncio.gather(*tasks, return_exceptions=True)
 
         symbols_attached_to_responses = zip(query.symbols, responses)
-        failed_symbols = [symbol for symbol, data in symbols_attached_to_responses if not isinstance(data, typing.List)]
+        failed_symbols = [
+            symbol
+            for symbol, data in symbols_attached_to_responses
+            if not isinstance(data, typing.List)
+        ]
         if len(failed_symbols) > 0:
-            _logger.warning(f"{len(failed_symbols)} failed symbols during fetching: {failed_symbols}")
+            _logger.warning(
+                f"{len(failed_symbols)} failed symbols during fetching: {failed_symbols}"
+            )
 
         return responses

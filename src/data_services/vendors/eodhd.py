@@ -1,7 +1,5 @@
 import os
 import requests
-import asyncio
-import aiohttp
 import logging
 import typing
 import logging.config
@@ -38,9 +36,9 @@ class EodhdVendor:
             _logger.info(f"Api key for {self.api.name} is loaded")
             if self.api_key is None:
                 raise InvalidEodKeyError(f"{self.api.name} api_key is None!")
-            
+
             # set initial params
-            self.params = { 
+            self.params = {
                 "api_token": self.api_key,
                 "fmt": "json",
             }
@@ -58,7 +56,9 @@ class EodhdVendor:
         response = requests.get(url=url, params=self.params)
         return response.json()
 
-    def fetch_symbols_from_exchange(self, exchange_code: str= 'US', delisted: typing.Optional[bool] = False) -> typing.List[typing.Dict]:
+    def fetch_symbols_from_exchange(
+        self, exchange_code: str = "US", delisted: typing.Optional[bool] = False
+    ) -> typing.List[typing.Dict]:
         """
         Get traded tickers from api
         """
@@ -78,11 +78,21 @@ class EodhdVendor:
         url = f"{self.root_url}/search/{search_query}"
         response = requests.get(url=url, params=params)
         return response.json()
-    
-    async def fetch_multi_symbols_data(self, query: type[TimeSeriesDataQuery]) -> typing.List[typing.Dict]:
-        async with  self.async_market_data_handler as handler:
-            params = {**self.params, "from": query.start.strftime("%Y-%m-%d"), "to": query.end.strftime("%Y-%m-%d")}
-            urls = [(symbol, f"{self.root_url}/eod/{symbol}.{query.exchange}")for symbol in query.symbols]
+
+    async def fetch_multi_symbols_data(
+        self, query: type[TimeSeriesDataQuery]
+    ) -> typing.List[typing.Dict]:
+        async with self.async_market_data_handler as handler:
+            params = {
+                **self.params,
+                "from": query.start.strftime("%Y-%m-%d"),
+                "to": query.end.strftime("%Y-%m-%d"),
+            }
+            urls = [
+                (symbol, f"{self.root_url}/eod/{symbol}.{query.exchange}")
+                for symbol in query.symbols
+            ]
             _logger.info(f" {len(urls)} tickers prices to fetch!")
-            return await handler.fetch_multi_symbols_data_helper(query=query, params=params, urls=urls)
-   
+            return await handler.fetch_multi_symbols_data_helper(
+                query=query, params=params, urls=urls
+            )
