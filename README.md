@@ -1,59 +1,118 @@
 [![test](https://github.com/lolay92/data-service/actions/workflows/ci.yml/badge.svg)](https://github.com/lolay92/data-service/actions/workflows/ci.yml)
 
-# About
-This project provides an infrastructure for collecting financial market data from different sources. The project includes a set of loaders for retrieving data from different APIs and a main loader that combines the data from all the sources.
+# Market Data Service
 
-# Project Roadmap
-- [x] Poetry for python packages and dependencies management
-- [x] Logging configuration
-- [x] System implementation for multiple API sources
-- [x] Set up a manager for file storage/archivage
-- [x] Unitary tests with Pytest
-- [x] Makefile
-- [x] Workflow automation (CI/CD) with github actions
-- [ ] Containerize with Docker
-- [ ] Set up a database to store data directly
+A flexible and extensible market data service capable of integrating multiple vendors for fetching financial market data.
 
-# Project Structure
-The project has the following directory structure:
-```bash
-.
-.
-├── Makefile
-├── README.md
-├── poetry.lock
-├── pyproject.toml
-├── setup.cfg
-├── src
-│   └── data_services
-│       ├── __init__.py
-│       ├── loader.py
-│       ├── loaders
-│       │   ├── __init__.py
-│       │   ├── base.py
-│       │   ├── eodhd.py
-│       │   └── tiingo.py
-│       └── utils
-│           ├── __init__.py
-│           ├── fetch_utils.py
-│           ├── log_utils.py
-│           └── universe.py
-└── tests
-    ├── __init__.py
-    ├── conftest.py
-    ├── pytest.ini
-    └── unit
-        ├── __init__.py
-        ├── test_eodhd.py
-        ├── test_fetch_utils.py
-        └── test_loader.py
+## Project Structure
+
+```
+market-data-service/
+├── src/
+│   └── data_services/
+│       ├── loaders/
+│       ├── utils/
+│       └── vendors/
+├── tests/
+├── db/
+├── logs/
+├── out/
+└── ...
 ```
 
-<!-- # Installation procedure 
-To be completed soon...
+## Features
 
-# Containerization with Docker
-To be completed soon... -->
+- Multi-vendor support (currently EODHD and Tiingo)
+- Asynchronous data fetching
+- OHLCV (Open, High, Low, Close, Volume) data retrieval
+- Intraday data support
+- Extensible architecture for easy addition of new data vendors
 
-# License
+## Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/market-data-service.git
+   cd market-data-service
+   ```
+
+2. Install dependencies using Poetry:
+   ```
+   poetry install
+   ```
+
+3. Set up the database:
+   ```
+   cd db
+   ./initdb.sh
+   ```
+
+## Configuration
+
+1. Create a `.env` file in the project root and add your API keys:
+   ```
+   EODHD_API_KEY=your_eodhd_api_key
+   TIINGO_API_KEY=your_tiingo_api_key
+   ```
+
+2. Configure your data universes in `src/data_services/utils/universe.py`.
+
+## Usage
+
+Here's a basic example of how to use the market data service:
+
+```python
+from data_services.vendors.eodhd import Eodhd
+from data_services.utils.universe import Universe
+from data_services._loader import getData
+
+# Define your universe
+universe = Universe.ETF
+
+# Fetch OHLCV data
+data = getData(Eodhd, universe, start_date='2023-01-01', end_date='2023-12-31')
+
+# Process the data
+print(data.head())
+```
+
+## Adding a New Vendor
+
+1. Create a new file in `src/data_services/vendors/` (e.g., `new_vendor.py`).
+2. Implement the vendor class, inheriting from `vendor.MarketDataVendor`.
+3. Override necessary methods like `fetchOhlcv`, `fetchIntraday`, etc.
+4. Update `src/data_services/_loader.py` to include the new vendor.
+
+## Running Tests
+
+Execute the test suite using pytest:
+
+```
+pytest tests/
+```
+
+## Project Schema
+
+```mermaid
+graph TD
+    A[Market Data Service] --> B[Loaders]
+    A --> C[Utils]
+    A --> D[Vendors]
+    B --> E[OHLCV Loader]
+    B --> F[Intraday Loader]
+    B --> G[Misc Loader]
+    C --> H[Async Handler]
+    C --> I[Data Processing]
+    C --> J[HTTP Response Handler]
+    D --> K[EODHD]
+    D --> L[Tiingo]
+    D --> M[Base Vendor]
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
