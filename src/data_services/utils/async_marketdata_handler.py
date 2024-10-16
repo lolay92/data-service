@@ -1,5 +1,6 @@
 import asyncio
 import aiohttp
+import itertools
 import logging
 import typing
 import logging.config
@@ -26,9 +27,7 @@ class AsyncMarketDataHandler:
         await self.aio_session.close()
 
     @retry(base_delay=1, max_delay=10, max_tries=3)
-    async def _fetch_symbol_data_helper(
-        self, symbol: str, url: str, params: typing.Dict
-    ) -> typing.Tuple[str, typing.List[typing.Dict]]:
+    async def _fetch_symbol_data_helper(self, symbol: str, url: str, params: typing.Dict) -> typing.Tuple[str, typing.List[typing.Dict]]:
         """
         fetch symbol data asynchronously
 
@@ -55,15 +54,14 @@ class AsyncMarketDataHandler:
         tasks = [self._fetch_symbol_data_helper(symbol, url, params) for symbol, url in urls]
         responses = await asyncio.gather(*tasks, return_exceptions=True)
 
-        symbols_attached_to_responses = zip(query.symbols, responses)
-        failed_symbols = [
-            symbol
-            for symbol, data in symbols_attached_to_responses
-            if not isinstance(data, typing.List)
-        ]
-        if len(failed_symbols) > 0:
-            _logger.warning(
-                f"{len(failed_symbols)} failed symbols during fetching: {failed_symbols}"
-            )
+        success_fetch_mask = [isinstance(response, typing.List) for response in responses]
+        failed_fetch_mask = [not el for el in success_fetch_mask]
 
-        return responses
+        success_responses = itertools.compress(responses, success_fetch_mask)
+        success_symbols = itertools.compress(query.symbols, success_fetch_mask)
+        failed_symbols = list(itertools.compress(query.symbols, failed_fetch_mask))
+
+        if len(failed_symbols) > 0:
+            _logger.warning(f"{len(failed_symbols)} failed symbols during fetching: {failed_symbols}")
+
+        return dict(zip(success_symbols, success_responses))
