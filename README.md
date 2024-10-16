@@ -7,7 +7,7 @@ A flexible and extensible market data service capable of integrating multiple ve
 ## Project Structure
 
 ```
-market-data-service/
+data-service/
 ├── src/
 │   └── data_services/
 │       ├── loaders/
@@ -108,10 +108,6 @@ graph TD
     D --> L[Tiingo]
     D --> M[Base Vendor]
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
